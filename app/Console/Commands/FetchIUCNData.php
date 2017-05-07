@@ -15,7 +15,7 @@ class FetchIUCNData extends Command
     const API_SPECIES_BY_ID = "species/id/";
     const API_NARRATIVE_BY_SPECIES_ID = "species/narrative/id/";
     const API_THREATS_BY_SPECIES_ID = "threats/species/id/";
-    const TOKEN = "9bb4facb6d23f48efbf424bb05c0c1ef1cf6f468393bc745d42179ac4aca5fee";
+    const TOKEN = "c6ff9291512eca32aca5b63c1e090eef46d9974c328838412045c311e4180594";
 
     /**
      * The name and signature of the console command.
@@ -51,9 +51,6 @@ class FetchIUCNData extends Command
         $countries = Country::all();
         // fetch species for each country
         foreach ($countries as $country) {
-            // Bypass countries that have finished syncing
-            // if (in_array($country->code, ['BN'])) continue;
-
             $allSpecies = $this->getAllSpecies($country->code);
             foreach ($allSpecies as $species) {
                 if (in_array($species->category, ['CR', 'EN', 'VU'])) {
@@ -88,37 +85,42 @@ class FetchIUCNData extends Command
                     }
 
                     // sync threats
-                    $speciesThreats = $this->getSpeciesThreats($species->taxonid);
-                    $prevcode = '';
-                    foreach ($speciesThreats as $st) {
-                        if ($st['code'] !== $prevcode) {
-                            $codes = explode(".", $st['code']);
-                            $parentThreat = Threat::where('order', $codes[0])->whereNull('parent_id')->first();
-                            $threat = null;
-                            foreach ($parentThreat->getAllChilds() as $firstchild) {
-                                if ($firstchild->code == $st['code']) {
-                                    $threat = $firstchild;
-                                    break;
+                    if (count($s->threats) == 0) {
+                        $speciesThreats = $this->getSpeciesThreats($species->taxonid);
+                        $prevcode = '';
+                        foreach ($speciesThreats as $st) {
+                            if ($st['code'] !== $prevcode) {
+                                $codes = explode(".", $st['code']);
+                                $parentThreat = Threat::where('order', $codes[0])->whereNull('parent_id')->first();
+                                $threat = null;
+                                if (!$parentThreat) {
+                                    continue;
                                 }
-                                foreach ($firstchild->getAllChilds() as $secondchild) {
-                                    if ($secondchild->code == $st['code']) {
-                                        $threat = $secondchild;
+                                foreach ($parentThreat->getAllChilds() as $firstchild) {
+                                    if ($firstchild->code == $st['code']) {
+                                        $threat = $firstchild;
+                                        break;
+                                    }
+                                    foreach ($firstchild->getAllChilds() as $secondchild) {
+                                        if ($secondchild->code == $st['code']) {
+                                            $threat = $secondchild;
+                                            break;
+                                        }
+                                    }
+                                    if ($threat) {
                                         break;
                                     }
                                 }
                                 if ($threat) {
-                                    break;
+                                    if ($s->threats->contains($threat->id) == null) {
+                                        $s->threats()->attach($threat);
+                                    }
                                 }
+                                $prevcode = $st['code'];
                             }
-                            if ($threat) {
-                                if ($s->threats->contains($threat->id) == null) {
-                                    $s->threats()->attach($threat);
-                                }
-                            }
-                            $prevcode = $st['code'];
-                            $s->save();
                         }
                     }
+                    $s->save();
                 }
             }
         }
