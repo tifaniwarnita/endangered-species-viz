@@ -53,65 +53,67 @@ class FetchIUCNData extends Command
         foreach ($countries as $country) {
             $allSpecies = $this->getAllSpecies($country->code);
             foreach ($allSpecies as $species) {
-                $s = Species::where('taxon_id', $species->taxonid)->first();
+                if (in_array($species->category, ['CR', 'EN', 'VU'])) {
+                    $s = Species::where('taxon_id', $species->taxonid)->first();
 
-                // if species did not exist, create new species
-                if ($s == null) {
-                    $getSpecies = $this->getSpecies($species->taxonid);
-                    if ($getSpecies[0]['kingdom'] == 'ANIMALIA' && in_array($getSpecies[0]['category'], ['CR', 'EN', 'VU'])) {
-                        $s = new Species;
-                        $s->taxon_id = $species->taxonid;
-                        $s->common_name = $getSpecies[0]['main_common_name'];
-                        $s->scientific_name = $getSpecies[0]['scientific_name'];
-                        $s->class = $getSpecies[0]['class'];
-                        $s->category = $getSpecies[0]['category'];
+                    // if species did not exist, create new species
+                    if ($s == null) {
+                        $getSpecies = $this->getSpecies($species->taxonid);
+                        if ($getSpecies[0]['kingdom'] == 'ANIMALIA' && in_array($getSpecies[0]['category'], ['CR', 'EN', 'VU'])) {
+                            $s = new Species;
+                            $s->taxon_id = $species->taxonid;
+                            $s->common_name = $getSpecies[0]['main_common_name'];
+                            $s->scientific_name = $getSpecies[0]['scientific_name'];
+                            $s->class = $getSpecies[0]['class'];
+                            $s->category = $getSpecies[0]['category'];
 
-                        $narrative = $this->getSpeciesNarrative($species->taxonid);
-                        if ($narrative[0]['populationtrend']) {
-                            $s->population_trend = $narrative[0]['populationtrend'];
+                            $narrative = $this->getSpeciesNarrative($species->taxonid);
+                            if ($narrative[0]['populationtrend']) {
+                                $s->population_trend = $narrative[0]['populationtrend'];
+                            } else {
+                                $s->population_trend = 'unknown';
+                            }
+                            $s->save();
                         } else {
-                            $s->population_trend = 'unknown';
+                            continue;
                         }
-                        $s->save();
-                    } else {
-                        continue;
                     }
-                }
 
-                // sync countries
-                if (!$s->countries->contains($country->id)) {
-                    $s->countries()->attach($country);
-                }
+                    // sync countries
+                    if (!$s->countries->contains($country->id)) {
+                        $s->countries()->attach($country);
+                    }
 
-                // sync threats
-                $speciesThreats = $this->getSpeciesThreats($species->taxonid);
-                foreach ($speciesThreats as $st) {
-                    $codes = explode(".", $st->code);
-                    $parentThreat = Threat::where('order', $codes[0])->whereNull('parent_id')->first();
-                    $threat = null;
-                    foreach ($parentThreat->getAllChilds() as $firstchild) {
-                        if ($firstchild->code == $st->code) {
-                            $threat = $firstchild;
-                            break;
-                        }
-                        foreach ($firstchild->getAllChilds() as $secondchild) {
-                            if ($secondchild->code == $st->code) {
-                                $threat = $secondchild;
+                    // sync threats
+                    $speciesThreats = $this->getSpeciesThreats($species->taxonid);
+                    foreach ($speciesThreats as $st) {
+                        $codes = explode(".", $st->code);
+                        $parentThreat = Threat::where('order', $codes[0])->whereNull('parent_id')->first();
+                        $threat = null;
+                        foreach ($parentThreat->getAllChilds() as $firstchild) {
+                            if ($firstchild->code == $st->code) {
+                                $threat = $firstchild;
+                                break;
+                            }
+                            foreach ($firstchild->getAllChilds() as $secondchild) {
+                                if ($secondchild->code == $st->code) {
+                                    $threat = $secondchild;
+                                    break;
+                                }
+                            }
+                            if ($threat) {
                                 break;
                             }
                         }
                         if ($threat) {
-                            break;
+                            if (!$s->threats->contains($threat->id)) {
+                                $s->threats()->attach($threat);
+                            }
                         }
                     }
-                    if ($threat) {
-                        if (!$s->threats->contains($threat->id)) {
-                            $s->threats()->attach($threat);
-                        }
-                    }
-                }
 
-                $s->save();
+                    $s->save();
+                }
             }
         }
     }
