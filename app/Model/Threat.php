@@ -27,14 +27,4 @@ class Threat extends Model
     {
         return $this->belongsToMany(Species::class, 'species_threats', 'threat_id', 'species_id');
     }
-
-    public function scopeAsc($query)
-    {
-        return $query->orderBy('order', 'ASC')->latest('created_at');
-    }
-
-    public function scopeDesc($query)
-    {
-        return $query->orderBy('order', 'DESC')->oldest('created_at');
-    }
 }
