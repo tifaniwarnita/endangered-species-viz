@@ -1069,7 +1069,7 @@ class ThreatsTableSeeder extends Seeder
             'updated_at' => \Carbon\Carbon::now()
         ]]);
 
-        // Category 11
+        // Category 12
         $threatId = DB::table('threats')->where('name', 'Other options')->first()->id;
 
         DB::table('threats')->insert([
