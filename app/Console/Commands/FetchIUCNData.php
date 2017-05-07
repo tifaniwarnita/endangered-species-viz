@@ -104,8 +104,10 @@ class FetchIUCNData extends Command
                             break;
                         }
                     }
-                    if (!$s->threats->contains($threat->id)) {
-                        $s->threats()->attach($threat);
+                    if ($threat) {
+                        if (!$s->threats->contains($threat->id)) {
+                            $s->threats()->attach($threat);
+                        }
                     }
                 }
 

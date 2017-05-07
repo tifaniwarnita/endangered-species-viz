@@ -23,6 +23,10 @@ class Species extends Model
         'class'
     ];
 
+    protected $appends = [
+        'type'
+    ];
+
     public function threats()
     {
         return $this->belongsToMany(Threat::class, 'species_threats', 'species_id', 'threat_id');
@@ -31,5 +35,34 @@ class Species extends Model
     public function countries()
     {
         return $this->belongsToMany(Country::class, 'species_countries', 'species_id', 'country_id');
+    }
+
+    public function getTypeAttribute()
+    {
+        $fishes = [
+            'AGNATHA',
+            'CHONDRICHTHYES',
+            'PLACODERMI',
+            'ACANTHODII',
+            'OSTEICHTHYES',
+            'MYXINI',
+            'PTERASPIDOMORPHI',
+            'THELODONTI',
+            'ANASPIDA',
+            'PETROMYZONTIDA',
+            'HYPEROARTIA',
+            'CONODONTA',
+            'CEPHALASPIDOMORPHI',
+            'ACTINOPTERYGII',
+            'SARCOPTERYGII'
+        ];
+
+        if (in_array($this->class, ['AVES', 'MAMMALIA', 'REPTILIA', 'AMPHIBIA'])) {
+            return $this->class;
+        }
+        if (in_array($this->class, $fishes)) {
+            return 'PISCES';
+        }
+        return 'INVERTEBRATAE';
     }
 }
