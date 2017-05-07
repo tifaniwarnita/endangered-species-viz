@@ -2,6 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Model\Country;
+use App\Model\Species;
+use App\Model\Threat;
 use Illuminate\Console\Command;
 use GuzzleHttp\Client;
 
@@ -9,6 +12,7 @@ class FetchIUCNData extends Command
 {
     const BASE_URL = "http://apiv3.iucnredlist.org/api/v3/";
     const API_SPECIES_BY_COUNTRY = "country/getspecies/";
+    const API_SPECIES_BY_ID = "species/id/";
     const API_NARRATIVE_BY_SPECIES_ID = "species/narrative/id/";
     const API_THREATS_BY_SPECIES_ID = "threats/species/id/";
     const TOKEN = "9bb4facb6d23f48efbf424bb05c0c1ef1cf6f468393bc745d42179ac4aca5fee";
@@ -44,8 +48,70 @@ class FetchIUCNData extends Command
      */
     public function handle()
     {
-        // $this->getAllSpecies("ID");
-        $this->getSpeciesNarrative("22694927");
+        $countries = Country::all();
+        // fetch species for each country
+        foreach ($countries as $country) {
+            $allSpecies = $this->getAllSpecies($country->code);
+            foreach ($allSpecies as $species) {
+                $s = Species::where('taxon_id', $species->taxonid)->first();
+
+                // if species did not exist, create new species
+                if ($s == null) {
+                    $getSpecies = $this->getSpecies($species->taxonid);
+                    if ($getSpecies[0]['kingdom'] == 'ANIMALIA' && in_array($getSpecies[0]['category'], ['CR', 'EN', 'VU'])) {
+                        $s = new Species;
+                        $s->taxon_id = $species->taxonid;
+                        $s->common_name = $getSpecies[0]['main_common_name'];
+                        $s->scientific_name = $getSpecies[0]['scientific_name'];
+                        $s->class = $getSpecies[0]['class'];
+                        $s->category = $getSpecies[0]['category'];
+
+                        $narrative = $this->getSpeciesNarrative($species->taxonid);
+                        if ($narrative[0]['populationtrend']) {
+                            $s->population_trend = $narrative[0]['populationtrend'];
+                        } else {
+                            $s->population_trend = 'unknown';
+                        }
+                        $s->save();
+                    } else {
+                        continue;
+                    }
+                }
+
+                // sync countries
+                if (!$s->countries->contains($country->id)) {
+                    $s->countries()->attach($country);
+                }
+
+                // sync threats
+                $speciesThreats = $this->getSpeciesThreats($species->taxonid);
+                foreach ($speciesThreats as $st) {
+                    $codes = explode(".", $st->code);
+                    $parentThreat = Threat::where('order', $codes[0])->whereNull('parent_id')->first();
+                    $threat = null;
+                    foreach ($parentThreat->getAllChilds() as $firstchild) {
+                        if ($firstchild->code == $st->code) {
+                            $threat = $firstchild;
+                            break;
+                        }
+                        foreach ($firstchild->getAllChilds() as $secondchild) {
+                            if ($secondchild->code == $st->code) {
+                                $threat = $secondchild;
+                                break;
+                            }
+                        }
+                        if ($threat) {
+                            break;
+                        }
+                    }
+                    if (!$s->threats->contains($threat->id)) {
+                        $s->threats()->attach($threat);
+                    }
+                }
+
+                $s->save();
+            }
+        }
     }
 
     /**
@@ -66,12 +132,28 @@ class FetchIUCNData extends Command
     private function getAllSpecies($country)
     {
         $url = $this->constructURL(self::API_SPECIES_BY_COUNTRY, $country, self::TOKEN);
-        echo($url);
+        $this->info("Fetching all species in " . $country);
 
         $client = new Client(['base_uri' => self::BASE_URL]);
         $res = $client->request('GET', $url);
 
         $response = json_decode($res->getBody())->result;
+        return $response;
+    }
+
+    /**
+     * Retrieve species.
+     *
+     * @return mixed
+     */
+    private function getSpecies($speciesId)
+    {
+        $url = $this->constructURL(self::API_SPECIES_BY_ID, $speciesId, self::TOKEN);
+
+        $client = new Client(['base_uri' => self::BASE_URL]);
+        $res = $client->request('GET', $url);
+
+        $response = json_decode($res->getBody(), true)['result'];
         return $response;
     }
 
@@ -83,12 +165,11 @@ class FetchIUCNData extends Command
     private function getSpeciesNarrative($speciesId)
     {
         $url = $this->constructURL(self::API_NARRATIVE_BY_SPECIES_ID, $speciesId, self::TOKEN);
-        echo($url);
 
         $client = new Client(['base_uri' => self::BASE_URL]);
         $res = $client->request('GET', $url);
 
-        $response = json_decode($res->getBody())->result;
+        $response = json_decode($res->getBody(), true)['result'];
         return $response;
     }
 
@@ -100,7 +181,6 @@ class FetchIUCNData extends Command
     private function getSpeciesThreats($speciesId)
     {
         $url = $this->constructURL(self::API_SPECIES_BY_COUNTRY, $speciesId, self::TOKEN);
-        echo($url);
 
         $client = new Client(['base_uri' => self::BASE_URL]);
         $res = $client->request('GET', $url);

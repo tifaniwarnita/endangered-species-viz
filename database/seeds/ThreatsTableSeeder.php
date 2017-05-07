@@ -436,7 +436,7 @@ class ThreatsTableSeeder extends Seeder
         ]]);
 
         // 5.3
-        $threatId = DB::table('threats')->where('name', 'Gathering terrestrial plants')->first()->id;
+        $threatId = DB::table('threats')->where('name', 'Logging & wood harvesting')->first()->id;
 
         DB::table('threats')->insert([
         [

@@ -30,6 +30,6 @@ class Species extends Model
 
     public function countries()
     {
-        return $this->belongsToMany(Country::class, 'species_threats', 'species_id', 'country_id');
+        return $this->belongsToMany(Country::class, 'species_countries', 'species_id', 'country_id');
     }
 }

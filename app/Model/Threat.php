@@ -23,8 +23,26 @@ class Threat extends Model
         'parent_id'
     ];
 
+    protected $appends = [
+        'code'
+    ];
+
     public function species()
     {
         return $this->belongsToMany(Species::class, 'species_threats', 'threat_id', 'species_id');
+    }
+
+    public function getCodeAttribute()
+    {
+        $code = $this->order;
+        $firstparent = $this->parent;
+        if ($firstparent) {
+            $code = $firstparent->order . '.' . $code;
+            $secondparent = $firstparent->parent;
+            if ($secondparent) {
+                $code = $secondparent->order . '.' . $code;
+            }
+        }
+        return $code;
     }
 }
