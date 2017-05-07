@@ -51,6 +51,9 @@ class FetchIUCNData extends Command
         $countries = Country::all();
         // fetch species for each country
         foreach ($countries as $country) {
+            // Bypass countries that have finished syncing
+            // if (in_array($country->code, ['BN'])) continue;
+
             $allSpecies = $this->getAllSpecies($country->code);
             foreach ($allSpecies as $species) {
                 if (in_array($species->category, ['CR', 'EN', 'VU'])) {
@@ -86,33 +89,36 @@ class FetchIUCNData extends Command
 
                     // sync threats
                     $speciesThreats = $this->getSpeciesThreats($species->taxonid);
+                    $prevcode = '';
                     foreach ($speciesThreats as $st) {
-                        $codes = explode(".", $st->code);
-                        $parentThreat = Threat::where('order', $codes[0])->whereNull('parent_id')->first();
-                        $threat = null;
-                        foreach ($parentThreat->getAllChilds() as $firstchild) {
-                            if ($firstchild->code == $st->code) {
-                                $threat = $firstchild;
-                                break;
-                            }
-                            foreach ($firstchild->getAllChilds() as $secondchild) {
-                                if ($secondchild->code == $st->code) {
-                                    $threat = $secondchild;
+                        if ($st['code'] !== $prevcode) {
+                            $codes = explode(".", $st['code']);
+                            $parentThreat = Threat::where('order', $codes[0])->whereNull('parent_id')->first();
+                            $threat = null;
+                            foreach ($parentThreat->getAllChilds() as $firstchild) {
+                                if ($firstchild->code == $st['code']) {
+                                    $threat = $firstchild;
+                                    break;
+                                }
+                                foreach ($firstchild->getAllChilds() as $secondchild) {
+                                    if ($secondchild->code == $st['code']) {
+                                        $threat = $secondchild;
+                                        break;
+                                    }
+                                }
+                                if ($threat) {
                                     break;
                                 }
                             }
                             if ($threat) {
-                                break;
+                                if ($s->threats->contains($threat->id) == null) {
+                                    $s->threats()->attach($threat);
+                                }
                             }
-                        }
-                        if ($threat) {
-                            if (!$s->threats->contains($threat->id)) {
-                                $s->threats()->attach($threat);
-                            }
+                            $prevcode = $st['code'];
+                            $s->save();
                         }
                     }
-
-                    $s->save();
                 }
             }
         }
@@ -136,12 +142,13 @@ class FetchIUCNData extends Command
     private function getAllSpecies($country)
     {
         $url = $this->constructURL(self::API_SPECIES_BY_COUNTRY, $country, self::TOKEN);
-        $this->info("Fetching all species in " . $country);
 
         $client = new Client(['base_uri' => self::BASE_URL]);
         $res = $client->request('GET', $url);
 
         $response = json_decode($res->getBody())->result;
+        $this->info("Fetching all species in " . $country);
+
         return $response;
     }
 
@@ -184,12 +191,12 @@ class FetchIUCNData extends Command
      */
     private function getSpeciesThreats($speciesId)
     {
-        $url = $this->constructURL(self::API_SPECIES_BY_COUNTRY, $speciesId, self::TOKEN);
+        $url = $this->constructURL(self::API_THREATS_BY_SPECIES_ID, $speciesId, self::TOKEN);
 
         $client = new Client(['base_uri' => self::BASE_URL]);
         $res = $client->request('GET', $url);
 
-        $response = json_decode($res->getBody())->result;
+        $response = json_decode($res->getBody(), true)['result'];
         return $response;
     }
 }
