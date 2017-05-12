@@ -1,6 +1,6 @@
 // Dimensions of sunburst.
-var width = 750;
-var height = 600;
+var width = 375;
+var height = 300;
 var radius = Math.min(width, height) / 2;
 
 // Breadcrumb dimensions: width, height, spacing, width of tip/tail.
@@ -40,6 +40,7 @@ var arc = d3.svg.arc()
 
 
 d3.json('/threats/data', function(json) {
+  console.log("masuk");
   createVisualization(json);
 });
 

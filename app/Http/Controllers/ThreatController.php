@@ -2,13 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Model\Country;
 use App\Model\Threat;
+use Illuminate\Http\Request;
 
 class ThreatController extends Controller
 {
-    public function data()
+    public function data(Request $request)
     {
-        $threats = Threat::whereNull('parent_id')->orderBy('order')->withChilds()->get();
+        $query = Threat::whereNull('parent_id')->orderBy('order')->withChilds();
+        // if ($request->get('country')) {
+        //     $country = Country::where('code', $request->get('country'))->first();
+        //     $query = $query->with(['species' => function ($query) use ($country) {
+        //         $query->where('country_id', $country->id);
+        //     }]);
+        // }
+
+        $threats = $query->get();
         $result = [];
         $obj = new \stdClass();
         $obj->name = 'root';
