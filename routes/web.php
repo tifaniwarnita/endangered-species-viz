@@ -14,3 +14,8 @@
 Route::get('/', function () {
     return view('home');
 });
+
+Route::get('threats/data', [
+    'as' => 'threats.data',
+    'uses' => 'ThreatController@data'
+]);

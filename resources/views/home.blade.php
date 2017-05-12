@@ -10,11 +10,10 @@
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
 
-        
-
         <!-- Stylesheet -->
         <link href="{{ asset('css/app.css') }}" rel="stylesheet">
         <link rel="stylesheet" href="{{ asset('lib/bootstrap/dist/css/bootstrap.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ resource_path('assets/css/sunburst.css') }}"/>
 
         <!-- jQuery library -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -22,6 +21,8 @@
         <!-- Latest compiled JavaScript -->
         <script src="{{ asset('lib/bootstrap/dist/js/bootstrap.min.js') }}"></script>
 
+        <!-- d3js -->
+        <script src="https://d3js.org/d3.v3.min.js"></script>
     </head>
     <body>
         <div class="container">
@@ -36,7 +37,7 @@
                 <div class="col-md-8">
                     @include ('partials.map')
                 </div>
-                
+
                 <div class="col-md-4">
                     <div class="visible hidden-xs hidden-sm">
                         <!-- carousel -->
@@ -55,6 +56,7 @@
                <!-- threats -->
                <div class="col-md-4">
                     <h4> Threats </h4>
+                    @include ('partials.threats')
                </div>
 
                <!-- class -->
