@@ -1,22 +1,24 @@
 // Dimensions of sunburst.
-var width = 375;
-var height = 300;
+var width = 300;
+var height = 240;
 var radius = Math.min(width, height) / 2;
 
 // Breadcrumb dimensions: width, height, spacing, width of tip/tail.
 var b = {
-  w: 75, h: 30, s: 3, t: 10
+  w: 40, h: 30, s: 3, t: 10
 };
 
 // Mapping of step names to colors.
-var colors = {
-  "home": "#5687d1",
-  "product": "#7b615c",
-  "search": "#de783b",
-  "account": "#6ab975",
-  "other": "#a173d1",
-  "end": "#bbbbbb"
-};
+var colors;
+$.getJSON('threats/colors', function(json){
+    colors = json;
+});
+
+// Threat labels
+var labels;
+$.getJSON('threats/labels', function(json){
+    labels = json;
+});
 
 // Total size of all segments; we set this later, after loading the data.
 var totalSize = 0;
@@ -40,7 +42,6 @@ var arc = d3.svg.arc()
 
 
 d3.json('/threats/data', function(json) {
-  console.log("masuk");
   createVisualization(json);
 });
 
@@ -72,7 +73,11 @@ function createVisualization(json) {
       .attr("fill-rule", "evenodd")
       .style("fill", function(d) { return colors[d.name]; })
       .style("opacity", 1)
+      // .append("title", function(d) { return labels[d.name]; }))
       .on("mouseover", mouseover);
+
+  d3.selectAll("path").append("svg:title")
+    .text(function(d) { return labels[d.name]; });
 
   // Add the mouseleave handler to the bounding circle.
   d3.select("#container").on("mouseleave", mouseleave);
@@ -153,9 +158,9 @@ function initializeBreadcrumbTrail() {
       .attr("height", 50)
       .attr("id", "trail");
   // Add the label at the end, for the percentage.
-  trail.append("svg:text")
-    .attr("id", "endlabel")
-    .style("fill", "#000");
+  // trail.append("svg:text")
+  //   .attr("id", "endlabel")
+  //   .style("fill", "#000");
 }
 
 // Generate a string that describes the points of a breadcrumb polygon.

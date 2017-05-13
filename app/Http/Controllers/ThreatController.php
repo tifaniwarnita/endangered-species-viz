@@ -25,16 +25,16 @@ class ThreatController extends Controller
 
         foreach ($threats as $threat) {
             $data = [];
-            $data['name'] = $threat->name;
+            $data['name'] = $threat->code;
             $firsts = [];
             foreach ($threat->childs as $first) {
                 $fdata = [];
-                $fdata['name'] = $first->name;
+                $fdata['name'] = $first->code;
                 if (count($first->childs) > 0) {
                     $seconds = [];
                     foreach ($first->childs as $second) {
                         $sdata = [];
-                        $sdata['name'] = $second->name;
+                        $sdata['name'] = $second->code;
                         $sdata['size'] = count($second->species);
                         $seconds[] = $sdata;
                     }
@@ -52,5 +52,41 @@ class ThreatController extends Controller
 
         $obj->children = $result;
         return json_encode($obj);
+    }
+
+    public function colors()
+    {
+        $color = [
+            '1' => '#4c5454',
+            '2' => '#1ea896',
+            '3' => '#82b7f7',
+            '4' => '#da2c38',
+            '5' => '#226f54',
+            '6' => '#3b2314',
+            '7' => '#c97e60',
+            '8' => '#fbb85f',
+            '9' => '#b2d869',
+            '10' => '#b5343b',
+            '11' => '#dd614a',
+            '12' => '#c1a172'
+        ];
+
+        $threats = Threat::all();
+        $result = [];
+        foreach ($threats as $threat) {
+            $parent = explode(".", $threat->code)[0];
+            $result[$threat->code] = $color[$parent];
+        }
+        return json_encode($result, JSON_FORCE_OBJECT);
+    }
+
+    public function labels()
+    {
+        $threats = Threat::all();
+        $result = [];
+        foreach ($threats as $threat) {
+            $result[$threat->code] = $threat->name;
+        }
+        return json_encode($result, JSON_FORCE_OBJECT);
     }
 }

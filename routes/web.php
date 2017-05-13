@@ -15,7 +15,17 @@ Route::get('/', function () {
     return view('home');
 });
 
-Route::get('threats/data', [
-    'as' => 'threats.data',
-    'uses' => 'ThreatController@data'
-]);
+\Route::group(['prefix' => 'threats'], function () {
+    Route::get('data', [
+        'as' => 'threats.data',
+        'uses' => 'ThreatController@data'
+    ]);
+    Route::get('colors', [
+        'as' => 'threats.colors',
+        'uses' => 'ThreatController@colors'
+    ]);
+    Route::get('labels', [
+        'as' => 'threats.labels',
+        'uses' => 'ThreatController@labels'
+    ]);
+});
