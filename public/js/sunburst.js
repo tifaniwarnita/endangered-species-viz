@@ -5,7 +5,7 @@ var radius = Math.min(width, height) / 2;
 
 // Breadcrumb dimensions: width, height, spacing, width of tip/tail.
 var b = {
-  w: 40, h: 30, s: 3, t: 10
+  w: 45, h: 30, s: 3, t: 10
 };
 
 // Mapping of step names to colors.
@@ -32,6 +32,7 @@ var vis = d3.select("#chart").append("svg:svg")
 
 var partition = d3.layout.partition()
     .size([2 * Math.PI, radius * radius])
+    .sort(function(a, b) { return d3.ascending(a.name, b.name); })
     .value(function(d) { return d.size; });
 
 var arc = d3.svg.arc()
@@ -73,7 +74,6 @@ function createVisualization(json) {
       .attr("fill-rule", "evenodd")
       .style("fill", function(d) { return colors[d.name]; })
       .style("opacity", 1)
-      // .append("title", function(d) { return labels[d.name]; }))
       .on("mouseover", mouseover);
 
   d3.selectAll("path").append("svg:title")
