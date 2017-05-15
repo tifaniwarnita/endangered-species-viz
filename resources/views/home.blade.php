@@ -25,13 +25,12 @@
     </head>
     <body>
         <div class="container">
-           <!-- title -->
-           <div class="page-header">
-                <h1> Endangered Animals </h1>
-                <p> of Southeast Asia </p>
-           </div>
+            <!-- title -->
+            <div class="page-header">
+                <h1> Threatened Animals of Southeast Asia</h1>
+            </div>
 
-           <div class="row">
+            <div class="row">
                 <!-- map -->
                 <div class="col-md-8">
                     @include ('partials.map')
@@ -40,18 +39,66 @@
                 <div class="col-md-4">
                     <div class="visible hidden-xs hidden-sm">
                         <!-- carousel -->
-                        <div class="jumbotron">
-                            <h2> Carousel </h2>
+                        <div id="myCarousel" class="carousel slide" data-ride="carousel">
+                        <!-- Indicators -->
+                        <ol class="carousel-indicators">
+                          <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                          <li data-target="#myCarousel" data-slide-to="1"></li>
+                          <li data-target="#myCarousel" data-slide-to="2"></li>
+                        </ol>
+
+                        <!-- Wrapper for slides -->
+                        <div class="carousel-inner">
+                          <div class="item active">
+                            <img src="{{ asset('img/sample_image.jpg') }} " alt="Pic1">
+                            <div class="carousel-desc">
+                                <p>
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                Curabitur id sapien mauris. Nam eget mattis arcu.
+                                Maecenas vel erat leo. Curabitur porta, nisl ut ultrices consequat, nibh orci efficitur diam, eget molestie arcu ex vitae justo.
+                                </p>
+                            </div>
+                          </div>
+
+                          <div class="item">
+                            <img src="{{ asset('img/sample_image.jpg') }}" alt="Pic2">
+                            <div class="carousel-desc">
+                                <p>
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                Curabitur id sapien mauris. Nam eget mattis arcu.
+                                Maecenas vel erat leo. Curabitur porta, nisl ut ultrices consequat, nibh orci efficitur diam, eget molestie arcu ex vitae justo.
+                                </p>
+                            </div>
+                          </div>
+
+                          <div class="item">
+                            <img src="{{ asset('img/sample_image.jpg') }}" alt="Pic3">
+                            <div class="carousel-desc">
+                                <p>
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                Curabitur id sapien mauris. Nam eget mattis arcu.
+                                Maecenas vel erat leo. Curabitur porta, nisl ut ultrices consequat, nibh orci efficitur diam, eget molestie arcu ex vitae justo.
+                                </p>
+                            </div>
+                          </div>
                         </div>
-                        <!-- description -->
-                        <div class="jumbotron">
-                            <h3> Description </h3>
-                        </div>
+
+                        <!-- Left and right controls -->
+                        <a class="left carousel-control" href="#myCarousel" data-slide="prev">
+                          <span class="glyphicon glyphicon-chevron-left"></span>
+                          <span class="sr-only">Previous</span>
+                        </a>
+                        <a class="right carousel-control" href="#myCarousel" data-slide="next">
+                          <span class="glyphicon glyphicon-chevron-right"></span>
+                          <span class="sr-only">Next</span>
+                        </a>
+                      </div>
+
                     </div>
                 </div>
-           </div>
+            </div>
 
-            <div class="row">
+            <div class="row" style="margin-top:20px">
                <!-- threats -->
                <div class="col-md-4">
                     <h4> Threats </h4>
@@ -65,7 +112,7 @@
 
                <!-- population trend -->
                <div class="col-md-4">
-                    <h4> Population </h4>
+                    <h4> Population Trend</h4>
                     @include('partials.population')
                </div>
 
@@ -74,3 +121,20 @@
         </div>
     </body>
 </html>
+
+<style>
+.carousel-inner > .item > img {
+  width:360px;
+  height:200px;
+}
+
+.carousel-inner > .item > .carousel-desc {
+  height: 200px;
+  background: #f8f8ff;
+  padding:20px;
+}
+
+.carousel-control.left, .carousel-control.right {
+    background-image: none
+}
+</style>

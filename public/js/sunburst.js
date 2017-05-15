@@ -105,7 +105,7 @@ function mouseover(d) {
   updateBreadcrumbs(sequenceArray, percentageString);
 
   // Fade all the segments.
-  d3.selectAll("path")
+  d3.select("#chart").selectAll("path")
       .style("opacity", 0.3);
 
   // Then highlight only those that are an ancestor of the current segment.
@@ -124,10 +124,10 @@ function mouseleave(d) {
       .style("visibility", "hidden");
 
   // Deactivate all segments during transition.
-  d3.selectAll("path").on("mouseover", null);
+  d3.select("#chart").selectAll("path").on("mouseover", null);
 
   // Transition each segment to full opacity and then reactivate it.
-  d3.selectAll("path")
+  d3.select("#chart").selectAll("path")
       .transition()
       .duration(1000)
       .style("opacity", 1)
