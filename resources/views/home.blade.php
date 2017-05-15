@@ -108,6 +108,7 @@
                <!-- class -->
                 <div class="col-md-4">
                     <h4> Class </h4>
+                    @include ('partials.treemap')
                 </div>
 
                <!-- population trend -->
