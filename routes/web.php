@@ -36,3 +36,10 @@ Route::get('/', function () {
         'uses' => 'PopulationController@data'
     ]);
 });
+
+\Route::group(['prefix' => 'types'], function () {
+    Route::get('data', [
+        'as' => 'types.data',
+        'uses' => 'TypeController@data'
+    ]);
+});

@@ -160,6 +160,7 @@ function main(o, data) {
       .append("title")
         .text(function(d) { return d.key + " (" + formatNumber(d.value) + ")"; });
 
+
     g.append("rect")
         .attr("class", "parent")
         .call(rect);
@@ -175,8 +176,16 @@ function main(o, data) {
         .text(function(d) { return formatNumber(d.value); });
     t.call(text);
 
+    g.append("image")
+        .attr("class", "icon")
+        .attr('xlink:href', function(d) { return assetBaseUrl + 'img/' + d.key + '.png'})
+        .attr("x", function(d) { return x(d.x) + 0.5* x(d.dx) - 25; })
+        .attr("y", function(d) { return y(d.y) + 0.5* y(d.dy) - 17; });
+
     g.selectAll("rect")
         .style("fill", function(d) { return color(d.key); });
+
+    
 
     function transition(d) {
       if (transitioning || !d) return;
