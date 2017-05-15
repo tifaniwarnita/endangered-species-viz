@@ -29,3 +29,10 @@ Route::get('/', function () {
         'uses' => 'ThreatController@labels'
     ]);
 });
+
+\Route::group(['prefix' => 'population'], function () {
+    Route::get('data', [
+        'as' => 'population.data',
+        'uses' => 'PopulationController@data'
+    ]);
+});
