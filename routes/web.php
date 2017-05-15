@@ -30,9 +30,9 @@ Route::get('/', function () {
     ]);
 });
 
-\Route::group(['prefix' => 'types'], function () {
+\Route::group(['prefix' => 'population'], function () {
     Route::get('data', [
-        'as' => 'types.data',
-        'uses' => 'TypeController@data'
+        'as' => 'population.data',
+        'uses' => 'PopulationController@data'
     ]);
 });
