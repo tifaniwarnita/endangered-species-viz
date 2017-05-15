@@ -1,7 +1,8 @@
-var minimum = 27, maximum = 894;
-var minimumcolor = "#000000", maximumcolor = "#ffffff";
-var color = d3.scale.linear().domain([minimum, maximum]).range([minimumcolor, maximumcolor]);
+var palleteScales = d3.scale.linear()
+.domain([27, 894])
+.range(["#ffebee", "#b71c1c"]);
 var dataset={};
+
 $.getJSON('species/data', function(json){
     $.each(json, function (i, item){
       var iso = item.Country, value = item.Count;
@@ -45,7 +46,7 @@ $.getJSON('species/data', function(json){
       }
       if (value=="0"){} else
       {
-        dataset[iso2] = {fillColor: color(parseInt(value)), numberOfThings: value};
+        dataset[iso2] = {fillColor: palleteScales(value), numberOfThings: value};
         zoom.updateChoropleth(dataset);
       };
     });
@@ -74,7 +75,8 @@ var zoom = new Datamap({
    popupTemplate: function(geography, data) {
       return '<div class="hoverinfo"><b>' + geography.properties.name + '</b><br/>' +
       'Jumlah threatened ' + data.numberOfThings + '</div>';
-    }
+    },
+    highlightFillColor: '#2196F3',
   },
- 
 });
+
