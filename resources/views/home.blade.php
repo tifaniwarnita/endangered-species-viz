@@ -27,8 +27,7 @@
         <div class="container">
             <!-- title -->
             <div class="page-header">
-                <h1> Endangered Animals </h1>
-                <p> of Southeast Asia </p>
+                <h1> Threatened Animals of Southeast Asia</h1>
             </div>
 
             <div class="row">
@@ -113,7 +112,7 @@
 
                <!-- population trend -->
                <div class="col-md-4">
-                    <h4> Population </h4>
+                    <h4> Population Trend</h4>
                </div>
 
             </div>
