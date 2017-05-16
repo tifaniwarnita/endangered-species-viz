@@ -121,22 +121,36 @@ var zoom = new Datamap({
 });
 
 d3.selectAll('.datamaps-subunit').on('click', function(country) {
+  console.log(country);
   d3.selectAll('.datamaps-subunit').style("opacity", 0.2);
   d3.select(this).style("opacity", 1);
+  var countryCode;
   switch (country.id) {
-        case "BRN": threatUrl = baseUrl + '?country=BN'; break;
-        case "IDN": threatUrl = baseUrl + '?country=ID'; break;
-        case "KHM": threatUrl = baseUrl + '?country=KH'; break;
-        case "TLS": threatUrl = baseUrl + '?country=TL'; break;
-        case "LAO": threatUrl = baseUrl + '?country=LA'; break;
-        case "MYS": threatUrl = baseUrl + '?country=MY'; break;
-        case "MMR": threatUrl = baseUrl + '?country=MM'; break;
-        case "PHL": threatUrl = baseUrl + '?country=PH'; break;
-        case "SGD": threatUrl = baseUrl + '?country=SG'; break;
-        case "THA": threatUrl = baseUrl + '?country=TH'; break;
-        case "VNM": threatUrl = baseUrl + '?country=VN'; break;
+        case "BRN": countryCode = 'BN'; break;
+        case "IDN": countryCode = 'ID'; break;
+        case "KHM": countryCode = 'KH'; break;
+        case "TLS": countryCode = 'TL'; break;
+        case "LAO": countryCode = 'LA'; break;
+        case "MYS": countryCode = 'MY'; break;
+        case "MMR": countryCode = 'MM'; break;
+        case "PHL": countryCode = 'PH'; break;
+        case "SGD": countryCode = 'SG'; break;
+        case "THA": countryCode = 'TH'; break;
+        case "VNM": countryCode = 'VN'; break;
         default: break;
   }
+
+  d3.selectAll('.popCountry')
+    .transition()
+    .duration(500)
+    .style("opacity", 0.2);
+
+  d3.selectAll('.country' + countryCode)
+    .transition()
+    .duration(500)
+    .style("opacity", 1);
+
+  threatUrl = baseUrl + '?country=' + countryCode;
 
   d3.json(threatUrl, function(json) {
     d3.select('#chart').selectAll("svg").remove();
