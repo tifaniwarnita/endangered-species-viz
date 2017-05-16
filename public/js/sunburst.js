@@ -78,9 +78,6 @@ function createVisualization(json) {
       .style("opacity", 1)
       .on("mouseover", mouseover);
 
-  d3.selectAll("path").append("svg:title")
-    .text(function(d) { return labels[d.name]; });
-
   // Add the mouseleave handler to the bounding circle.
   d3.select("#container").on("mouseleave", mouseleave);
 
@@ -108,7 +105,7 @@ function mouseover(d) {
 
   // Fade all the segments.
   d3.select("#chart").selectAll("path")
-      .style("opacity", 0.3);
+      .style("opacity", 0.4);
 
   // Then highlight only those that are an ancestor of the current segment.
   vis.selectAll("path")
@@ -116,6 +113,8 @@ function mouseover(d) {
                 return (sequenceArray.indexOf(node) >= 0);
               })
       .style("opacity", 1);
+
+  showTooltipThreat(d, this);
 }
 
 // Restore everything to full opacity when moving off the visualization.
@@ -139,6 +138,8 @@ function mouseleave(d) {
 
   d3.select("#explanation")
       .style("visibility", "hidden");
+
+  hideTooltipThreat();
 }
 
 // Given a node in a partition layout, return an array of all of its ancestor
@@ -263,4 +264,62 @@ function toggleLegend() {
   } else {
     legend.style("visibility", "hidden");
   }
+}
+
+function showTooltipThreat(d, obj) {
+  // Get the current mouse position (as integer)
+  var mouse = d3.mouse(d3.select('#chart').node()).map(
+      function(d) { return parseInt(d); }
+  );
+
+  event = document.onmousemove || window.event; // IE-ism
+
+  // If pageX/Y aren't available and clientX/Y are,
+  // calculate pageX/Y - logic taken from jQuery.
+  // (This is to support old IE)
+  if (event.pageX == null && event.clientX != null) {
+      eventDoc = (event.target && event.target.ownerDocument) || document;
+      doc = eventDoc.documentElement;
+      body = eventDoc.body;
+
+      event.pageX = event.clientX +
+          (doc && doc.scrollLeft || body && body.scrollLeft || 0) -
+          (doc && doc.clientLeft || body && body.clientLeft || 0);
+      event.pageY = event.clientY +
+          (doc && doc.scrollTop  || body && body.scrollTop  || 0) -
+          (doc && doc.clientTop  || body && body.clientTop  || 0 );
+  }
+  // Calculate the absolute left and top offsets of the tooltip. If the
+  // mouse is close to the right border of the map, show the tooltip on
+  // the left.
+  var left = event.pageX + 25;
+  if ((window.innerWidth - left) < 200) {
+      left = window.innerWidth - 200;
+  }
+  var top = event.pageY + 25;
+  if ((top - window.outerHeight) > 40) {
+      top = window.innerHeight + 90;
+  }
+  var delta = d.y1 - d.y0;
+
+  var tooltipText = createTooltipThreat(d);
+
+  // Show the tooltip (unhide it) and set the name of the data entry.
+  // Set the position as calculated before.
+  tooltip.classed('hidden', false)
+      .attr("style", "left:" + left + "px; top:" + top + "px")
+      .html(tooltipText);
+}
+
+function createTooltipThreat(d) {
+    var tooltipHtml = '';
+    tooltipHtml += '<div>';
+    tooltipHtml += '<div class="tooltip-title">' + labels[d.name] + '</div>';
+    // tooltipHtml += type + ': ' + value + ' species';
+    tooltipHtml += '</div>';
+    return tooltipHtml;
+}
+
+function hideTooltipThreat() {
+  tooltip.classed('hidden', true);
 }
