@@ -121,7 +121,7 @@ function mouseover(d) {
 function mouseleave(d) {
 
   // Hide the breadcrumb trail
-  d3.select("#trail")
+  d3.select("#sequence").select("#trail")
       .style("visibility", "hidden");
 
   // Deactivate all segments during transition.
@@ -182,9 +182,8 @@ function breadcrumbPoints(d, i) {
 
 // Update the breadcrumb trail to show the current sequence and percentage.
 function updateBreadcrumbs(nodeArray, percentageString) {
-
   // Data join; key function combines name and depth (= position in sequence).
-  var g = d3.select("#trail")
+  var g = d3.select("#sequence").select("#trail")
       .selectAll("g")
       .data(nodeArray, function(d) { return d.name + d.depth; });
 
@@ -211,7 +210,7 @@ function updateBreadcrumbs(nodeArray, percentageString) {
   g.exit().remove();
 
   // Now move and update the percentage at the end.
-  d3.select("#trail").select("#endlabel")
+  d3.select("#sequence").select("#trail").select("#endlabel")
       .attr("x", (nodeArray.length + 0.5) * (b.w + b.s))
       .attr("y", b.h / 2)
       .attr("dy", "0.35em")
@@ -219,7 +218,7 @@ function updateBreadcrumbs(nodeArray, percentageString) {
       .text(percentageString);
 
   // Make the breadcrumb trail visible, if it's hidden.
-  d3.select("#trail")
+  d3.select("#sequence").select("#trail")
       .style("visibility", "");
 
 }

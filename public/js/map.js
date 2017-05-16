@@ -3,6 +3,46 @@ var palleteScales = d3.scale.linear()
 .range(["#ffebee", "#b71c1c"]);
 var dataset={};
 
+var b = {
+  w: 100, h: 30, s: 3, t: 10
+};
+
+initializeMainBreadcrumb();
+var g = d3.select("#mainsequence").select("#trail");
+g.append("svg:polygon")
+      .attr("points", MainBreadcrumbPoints)
+      .style("fill", "#B9DCEE");
+
+g.append("svg:text")
+      .attr("x", (b.w + b.t) / 2)
+      .attr("y", b.h / 2)
+      .attr("dy", "0.35em")
+      .attr("text-anchor", "middle")
+      .text("South East Asia");
+
+function initializeMainBreadcrumb() {
+  // Add the svg area.
+  var trail = d3.select("#mainsequence").append("svg:svg")
+      .attr("width", 500)
+      .attr("height", 50)
+      .attr("id", "trail");
+}
+
+// Generate a string that describes the points of a breadcrumb polygon.
+function MainBreadcrumbPoints(d, i) {
+  var points = [];
+  points.push("0,0");
+  points.push(b.w + ",0");
+  points.push(b.w + b.t + "," + (b.h / 2));
+  points.push(b.w + "," + b.h);
+  points.push("0," + b.h);
+  if (i > 0) { // Leftmost breadcrumb; don't include 6th vertex.
+    points.push(b.t + "," + (b.h / 2));
+  }
+  return points.join(" ");
+}
+
+
 $.getJSON('species/data', function(json){
     $.each(json, function (i, item){
       var iso = item.Country, value = item.Count;
@@ -63,9 +103,9 @@ var zoom = new Datamap({
   // Zoom in on SEA
   setProjection: function(element) {
     var projection = d3.geo.equirectangular()
-      .center([125, 7])
+      .center([120, 6.5])
       .rotate([4.4, 0])
-      .scale(650)
+      .scale(680)
       .translate([element.offsetWidth / 2, element.offsetHeight / 2]);
     var path = d3.geo.path()
       .projection(projection);
