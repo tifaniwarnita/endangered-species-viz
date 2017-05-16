@@ -32,7 +32,7 @@ var vis = d3.select("#chart").append("svg:svg")
 
 var partition = d3.layout.partition()
     .size([2 * Math.PI, radius * radius])
-    .sort(function(a, b) { return d3.ascending(a.name, b.name); })
+    // .sort(function(a, b) { return d3.ascending(a.name, b.name); })
     .value(function(d) { return d.size; });
 
 var arc = d3.svg.arc()

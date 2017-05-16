@@ -29,12 +29,12 @@ function main(o, data) {
   
   var color = d3.scale.ordinal()
               .range([
-                "#f5b882",
-                "#b6e4b5",
-                "#efe06b",
-                "#f19998",
-                "#bbdfef",
-                "#84beaf"
+                "#c36364", //reptilia
+                "#b8f5e2", //amphibia
+                "#ffce8b", //aves
+                "#eeddd3", //mammalia
+                "#b8e1f5", //pisces
+                "#cca498"  //invertebratae
               ]);
   
   var x = d3.scale.linear()
@@ -66,7 +66,10 @@ function main(o, data) {
   grandparent.append("rect")
       .attr("y", -margin.top)
       .attr("width", width)
-      .attr("height", margin.top);
+      .attr("height", margin.top)
+      //.append("title")
+        //.text(function(d) { return "Total: " + "species types"; })
+      ;
   
   grandparent.append("text")
       .attr("x", 6)
@@ -149,7 +152,7 @@ function main(o, data) {
     g.filter(function(d) { return d._children; })
         .classed("children", true)
         .on("click", transition);
-
+/*
     var children = g.selectAll(".child")
         .data(function(d) { return d._children || [d]; })
       .enter().append("g");
@@ -158,12 +161,13 @@ function main(o, data) {
         .attr("class", "child")
         .call(rect)
       .append("title")
-        .text(function(d) { return d.key + " (" + formatNumber(d.value) + ")"; });
-
-
+        .text(function(d) { return d.key + " (" + d3.format(",.2%")((d.value/accumulate(root))) + ")"; });
+*/
     g.append("rect")
         .attr("class", "parent")
-        .call(rect);
+        .call(rect)
+        .append("title")
+        .text(function(d) { return d.key + " (" + d3.format(",.2%")((d.value/accumulate(root))) + ")"; });
 
     var t = g.append("text")
         .attr("class", "ptext")
@@ -173,17 +177,26 @@ function main(o, data) {
         .text(function(d) { return d.key; });
     t.append("tspan")
         .attr("dy", "1.0em")
-        .text(function(d) { return formatNumber(d.value); });
+        .text(function(d) { return "("+ formatNumber(d.value) +")"; });
     t.call(text);
 
     g.append("image")
         .attr("class", "icon")
         .attr('xlink:href', function(d) { return assetBaseUrl + 'img/' + d.key + '.png'})
-        .attr("x", function(d) { return x(d.x) + 0.5* x(d.dx) - 25; })
-        .attr("y", function(d) { return y(d.y) + 0.5* y(d.dy) - 17; });
+        .attr("x", function(d) { return x(d.x) + 0.5*(x(d.dx) - 0.8*y(d.dy)); })
+        .attr("y", function(d) { return y(d.y) + 0.1*y(d.dy) })
+        .attr("width", function(d) { return 0.8*y(d.dy) })
+        .attr("height", function(d) { return 0.8*y(d.dy) })
+        .append("title")
+        .text(function(d) { return d.key + " (" + d3.format(",.2%")((d.value/accumulate(root))) + ")"; });;
 
     g.selectAll("rect")
-        .style("fill", function(d) { return color(d.key); });
+        .style("fill", function(d) { return color(d.key); })
+        .on("mouseover", function(d){
+
+          d3.select(this).attr("fill","blue");
+          
+       });
 
     
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Model\Country;
+use App\Model\Species;
 use App\Model\Threat;
 use Illuminate\Http\Request;
 
@@ -11,17 +12,19 @@ class ThreatController extends Controller
     public function data(Request $request)
     {
         $query = Threat::whereNull('parent_id')->orderBy('order')->withChilds();
-        // if ($request->get('country')) {
-        //     $country = Country::where('code', $request->get('country'))->first();
-        //     $query = $query->with(['species' => function ($query) use ($country) {
-        //         $query->where('country_id', $country->id);
-        //     }]);
-        // }
-
         $threats = $query->get();
         $result = [];
         $obj = new \stdClass();
         $obj->name = 'root';
+
+        $cat = $request->get('category');
+        $country = Country::where('code', $request->get('country'))->first();
+        if ($country) {
+            $s = Species::whereHas('countries', function ($q) use ($country) {
+                $q->where('id', $country->id);
+            })->get()->pluck('id')->toArray();
+        }
+        // return $s;
 
         foreach ($threats as $threat) {
             $data = [];
@@ -35,12 +38,38 @@ class ThreatController extends Controller
                     foreach ($first->childs as $second) {
                         $sdata = [];
                         $sdata['name'] = $second->code;
-                        $sdata['size'] = count($second->species);
+                        $species = $second->species;
+                        if ($cat) {
+                            $species = $species->where('category', $cat);
+                        }
+                        if ($country) {
+                            $allsp = [];
+                            foreach ($species as $sp) {
+                                if (in_array($sp->id, $s)) {
+                                    $allsp[] = $sp;
+                                }
+                            }
+                            $species = $allsp;
+                        }
+                        $sdata['size'] = count($species);
                         $seconds[] = $sdata;
                     }
                     $fdata['children'] = $seconds;
                 } else {
-                    $fdata['size'] = count($first->species);
+                    $species = $first->species;
+                    if ($cat) {
+                        $species  = $species->where('category', $cat);
+                    }
+                    if ($country) {
+                        $allsp = [];
+                        foreach ($species as $sp) {
+                            if (in_array($sp->id, $s)) {
+                                $allsp[] = $sp;
+                            }
+                        }
+                        $species = $allsp;
+                    }
+                    $fdata['size'] = count($species);
                 }
 
                 $firsts[] = $fdata;
