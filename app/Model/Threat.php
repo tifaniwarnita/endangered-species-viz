@@ -3,6 +3,7 @@
 namespace App\Model;
 
 use App\Model\Extension\TreeTrait;
+use App\Model\Country;
 use App\Model\Species;
 use Illuminate\Database\Eloquent\Model;
 
@@ -30,6 +31,11 @@ class Threat extends Model
     public function species()
     {
         return $this->belongsToMany(Species::class, 'species_threats', 'threat_id', 'species_id');
+    }
+
+    public function countries()
+    {
+        return $this->hasManyThrough(Country::class, Species::class, 'threat_id', 'species_id', 'country_id');
     }
 
     public function getCodeAttribute()

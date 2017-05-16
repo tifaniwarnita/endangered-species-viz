@@ -6,7 +6,7 @@
       <span id="percentage"></span>
     </div>
   </div>
-  <div id="sequence"></div>
+  {{-- <div id="sequence"></div> --}}
 </div>
 {{-- <div id="sidebar">
   <input type="checkbox" id="togglelegend"> Legend<br/>
