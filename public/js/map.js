@@ -143,7 +143,10 @@ d3.selectAll('.datamaps-subunit').on('click', function(country) {
 
 $("#seatrail").click(function() {
   $("#countrytrail").hide();
-  d3.selectAll('.datamaps-subunit').style("opacity", 0.2);
+  d3.selectAll('.datamaps-subunit')
+    .transition()
+    .duration(500)
+    .style("opacity", 1);
 
   threatUrl = baseUrl;
   d3.json(threatUrl, function(json) {
