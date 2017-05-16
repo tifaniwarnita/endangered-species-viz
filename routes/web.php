@@ -31,6 +31,10 @@ Route::get('/', function () {
 });
 
 \Route::group(['prefix' => 'population'], function () {
+    Route::get('countries', [
+        'as' => 'population.countries',
+        'uses' => 'PopulationController@countries'
+    ]);
     Route::get('data', [
         'as' => 'population.data',
         'uses' => 'PopulationController@data'

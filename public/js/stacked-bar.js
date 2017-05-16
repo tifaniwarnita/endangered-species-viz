@@ -9,7 +9,7 @@ var y = d3.scale.linear()
     .rangeRound([height, 0]);
 
 var color = d3.scale.ordinal()
-    .range(["#98abc5", "#7b6888", "#da2c38", "#d0743c", "#ff8c00"]);
+    .range(["#ED9798", "#B7E2B2", "#E4E9D5", "#B9DCEE"]);
 
 var xAxis = d3.svg.axis()
     .scale(x)
@@ -32,8 +32,8 @@ var legendClassArray = []; //store legend classes to select bars in plotSingle()
 var y_orig; //to store original y-posn
 
 d3.json('/population/data', function(data) {
-
-  color.domain(d3.keys(data[0]).filter(function(key) { return key !== "Country"; }));
+  var orderedKey = ["Decreasing", "Stable", "Unknown", "Increasing"];
+  color.domain(orderedKey);
 
   data.forEach(function(d) {
     var mycountry = d.Country; //add to stock code
@@ -41,7 +41,7 @@ d3.json('/population/data', function(data) {
     //d.population = color.domain().map(function(name) { return {name: name, y0: y0, y1: y0 += +d[name]}; });
     d.population = color.domain().map(function(name) { return {mycountry:mycountry, name: name, y0: y0, y1: y0 += +d[name]}; });
     d.total = d.population[d.population.length - 1].y1;
-
+    console.log(JSON.stringify(d))
   });
 
   data.sort(function(a, b) { return b.total - a.total; });
