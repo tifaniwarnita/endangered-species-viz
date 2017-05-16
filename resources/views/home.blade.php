@@ -28,11 +28,13 @@
     </head>
     <body>
         <div id="background-carousel">
-            <div id="hero" class="carousel slide" data-ride="carousel">
-              <div class="carousel-hero">
+            <div id="hero" class="carousel slide carousel-fade" data-ride="carousel">
+              <div class="carousel-inner carousel-hero">
                 <div class="item active" style="background: url({{ asset('/img/hero/1.jpg') }}) no-repeat center scroll;"></div>
-                <div class="item" style="background-image:url(http://placehold.it/1600x800/)"></div>
-                <div class="item" style="background-image:url(http://placehold.it/1600x800/)"></div>  
+                <div class="item" style="background: url({{ asset('/img/hero/2.jpg') }}) no-repeat center scroll;"></div>
+                <div class="item" style="background: url({{ asset('/img/hero/3.jpg') }}) no-repeat center scroll;"></div>
+                <div class="item" style="background: url({{ asset('/img/hero/4.jpg') }}) no-repeat center scroll;"></div>
+                <div class="item" style="background: url({{ asset('/img/hero/5.jpg') }}) no-repeat center scroll;"></div>
               </div>
             </div>
         </div>
