@@ -11,7 +11,14 @@ class TypeController extends Controller
     public function data(Request $request)
     {
         $allspecies = Species::all();
-        $types = ['AVES', 'MAMMALIA', 'REPTILIA', 'AMPHIBIA', 'PISCES', 'INVERTEBRATAE'];
+
+        $types = [
+            'AVES' => '#ffce8b',
+            'MAMMALIA' => '#f7adae', 
+            'REPTILIA' => '#c36364', 
+            'AMPHIBIA' => '#b8f5e2', 
+            'PISCES' => '#b1d5e5', 
+            'INVERTEBRATAE' => '#cca498'];
         $result = [];
 
         $cat = $request->get('category');
@@ -35,13 +42,14 @@ class TypeController extends Controller
             $allspecies = $allsp;
         }
 
-        foreach ($types as $type) {
+        foreach ($types as $key => $type) {
             $data = [];
-            $data['key'] = title_case($type);
+            $data['key'] = title_case($key);
+            $data['color'] = $type;
             $count = 0;
 
             foreach ($allspecies as $species) {
-                if ($species->type === $type) {
+                if ($species->type === $key) {
                     $count++;
                 }
             }
