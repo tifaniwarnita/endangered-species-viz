@@ -25,6 +25,9 @@
         <!-- d3js -->
         <script src="https://d3js.org/d3.v3.min.js"></script>
 
+
+        <script src="{{ asset('js/smooth-scroll.min.js') }}"></script>
+
     </head>
     <body>
         <div id="background-carousel">
@@ -48,7 +51,7 @@
                             <p class="intro-text">
                                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
                             </p>
-                            <a href="#dashboard" class="btn btn-circle page-scroll">
+                            <a data-scroll href="#dashboard" class="btn btn-circle page-scroll">
                                 <i class="fa fa-angle-double-down animated"></i>
                             </a>
                         </div>
@@ -164,3 +167,7 @@
     background-image: none
 }
 </style>
+
+<script>
+    smoothScroll.init();
+</script>
