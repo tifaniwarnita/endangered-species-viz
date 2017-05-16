@@ -8,11 +8,13 @@
         <title>Endangered Animal</title>
 
         <!-- Fonts -->
-        <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Slab" rel="stylesheet">
 
         <!-- Stylesheet -->
-        <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+        <link href="{{ asset('css/font-awesome.min.css') }}" rel="stylesheet">
         <link rel="stylesheet" href="{{ asset('lib/bootstrap/dist/css/bootstrap.min.css') }}">
+        <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+        <link href="{{ asset('css/grayscale.css') }}" rel="stylesheet">
 
         <!-- jQuery library -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -22,14 +24,39 @@
 
         <!-- d3js -->
         <script src="https://d3js.org/d3.v3.min.js"></script>
-    </head>
-    <body class="background-img">
-        <div class="container">
-            <!-- title -->
-            <div class="page-header">
-                <h1> Threatened Animals of Southeast Asia</h1>
-            </div>
 
+    </head>
+    <body>
+        <div id="background-carousel">
+            <div id="hero" class="carousel slide" data-ride="carousel">
+              <div class="carousel-hero">
+                <div class="item active" style="background: url({{ asset('/img/hero/1.jpg') }}) no-repeat center scroll;"></div>
+                <div class="item" style="background-image:url(http://placehold.it/1600x800/)"></div>
+                <div class="item" style="background-image:url(http://placehold.it/1600x800/)"></div>  
+              </div>
+            </div>
+        </div>
+        <div id="content-wrapper" class="intro">
+            <div class="intro-body">
+                <div class="container full-width">
+                    <div class="row">
+                        <div class="col-md-8"></div>
+                        <div class="col-md-4 text-center">
+                            <h1 class="brand-heading">Threatened Animals of Southeast Asia</h1>
+                            <p class="intro-text">
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                            </p>
+                            <a href="#dashboard" class="btn btn-circle page-scroll">
+                                <i class="fa fa-angle-double-down animated"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="height: 250px"></div>
+        <div class="container" id="dashboard">
             <div class="row">
                 <!-- map -->
                 <div class="col-md-8">
@@ -96,20 +123,20 @@
             </div>
 
             <div class="row" style="margin-top:20px">
-               <!-- threats -->
-               <div class="col-md-4">
-                    <h4> Threats </h4>
-                    @include ('partials.threats')
-               </div>
-
                <!-- class -->
-                <div class="col-md-4">
+                <div class="col-lg-4">
                     <h4> Class </h4>
                     @include ('partials.treemap')
                 </div>
 
+                <!-- threats -->
+               <div class="col-lg-4">
+                    <h4> Threats </h4>
+                    @include ('partials.threats')
+               </div>
+
                <!-- population trend -->
-               <div id="population-trend" class="col-md-4">
+               <div id="population-trend" class="col-lg-4">
                     <h4> Population Trend</h4>
                     @include('partials.population')
                </div>
