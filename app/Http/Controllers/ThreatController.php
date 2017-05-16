@@ -19,9 +19,11 @@ class ThreatController extends Controller
 
         $cat = $request->get('category');
         $country = Country::where('code', $request->get('country'))->first();
-        $s = Species::whereHas('countries', function ($q) use ($country) {
-            $q->where('id', $country->id);
-        })->get()->pluck('id')->toArray();
+        if ($country) {
+            $s = Species::whereHas('countries', function ($q) use ($country) {
+                $q->where('id', $country->id);
+            })->get()->pluck('id')->toArray();
+        }
         // return $s;
 
         foreach ($threats as $threat) {
