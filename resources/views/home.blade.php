@@ -112,7 +112,7 @@
                 </div>
 
                <!-- population trend -->
-               <div class="col-md-4">
+               <div id="population-trend" class="col-md-4">
                     <h4> Population Trend</h4>
                     @include('partials.population')
                </div>

@@ -1,6 +1,6 @@
-var margin = {top: 40, right: 20, bottom: 30, left: 40},
+var margin = {top: 0, right: 20, bottom: 30, left: 40},
     width = 400 - margin.left - margin.right,
-    height = 280 - margin.top - margin.bottom;
+    height = 275 - margin.top - margin.bottom;
 
 var x = d3.scale.ordinal()
     .rangeRoundBands([0, width], .1);
@@ -9,7 +9,7 @@ var y = d3.scale.linear()
     .rangeRound([height, 0]);
 
 var color = d3.scale.ordinal()
-    .range(["#ED9798", "#B7E2B2", "#E4E9D5", "#B9DCEE"]);
+    .range(["#ED9798", "#B7E2B2", "#B9DCEE", "#D3D1A8"]);
 
 var xAxis = d3.svg.axis()
     .scale(x)
@@ -25,14 +25,23 @@ var svg = d3.select("#population-chart").append("svg")
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
+    
 var active_link = "0"; //to control legend selections and hover
 var legendClicked; //to control legend selections
 var legendClassArray = []; //store legend classes to select bars in plotSingle()
 var y_orig; //to store original y-posn
 
+var tooltip = d3.select("body").append("div")	
+    .attr("class", "tooltip")				
+    .style("opacity", 0);
+
+var countries;
+$.getJSON('population/countries', function(json){
+    countries = json;
+});
+
 d3.json('/population/data', function(data) {
-  var orderedKey = ["Decreasing", "Stable", "Unknown", "Increasing"];
+  var orderedKey = ["Decreasing", "Stable", "Increasing", "Unknown"];
   color.domain(orderedKey);
 
   data.forEach(function(d) {
@@ -41,7 +50,6 @@ d3.json('/population/data', function(data) {
     //d.population = color.domain().map(function(name) { return {name: name, y0: y0, y1: y0 += +d[name]}; });
     d.population = color.domain().map(function(name) { return {mycountry:mycountry, name: name, y0: y0, y1: y0 += +d[name]}; });
     d.total = d.population[d.population.length - 1].y1;
-    console.log(JSON.stringify(d))
   });
 
   data.sort(function(a, b) { return b.total - a.total; });
@@ -90,25 +98,19 @@ d3.json('/population/data', function(data) {
 
   country.selectAll("rect")
        .on("mouseover", function(d){
-
-          var delta = d.y1 - d.y0;
           var xPos = parseFloat(d3.select(this).attr("x"));
           var yPos = parseFloat(d3.select(this).attr("y"));
           var height = parseFloat(d3.select(this).attr("height"))
 
           d3.select(this).attr("stroke","blue").attr("stroke-width",0.8);
 
-          svg.append("text")
-          .attr("x",xPos)
-          .attr("y",yPos +height/2)
-          .attr("class","tooltip")
-          .text(d.name +": "+ delta); 
+          showTooltip(d, this);
           
        })
        .on("mouseout",function(){
           svg.select(".tooltip").remove();
           d3.select(this).attr("stroke","pink").attr("stroke-width",0.2);
-                                
+          hideTooltip();                  
         })
 
 
@@ -253,7 +255,68 @@ d3.json('/population/data', function(data) {
         .attr("y", y_new);
    
     })    
-   
-  } 
+  }
 
+  function showTooltip(d, obj) {
+    // Get the current mouse position (as integer)
+    var mouse = d3.mouse(d3.select('#population-chart').node()).map(
+        function(d) { return parseInt(d); }
+    );
+    
+    var xOffset = document.getElementById("population-trend").offsetLeft; 
+    var yOffset = document.getElementById("population-trend").offsetTop;
+
+    event = document.onmousemove || window.event; // IE-ism
+
+    // If pageX/Y aren't available and clientX/Y are,
+    // calculate pageX/Y - logic taken from jQuery.
+    // (This is to support old IE)
+    if (event.pageX == null && event.clientX != null) {
+        eventDoc = (event.target && event.target.ownerDocument) || document;
+        doc = eventDoc.documentElement;
+        body = eventDoc.body;
+
+        event.pageX = event.clientX +
+            (doc && doc.scrollLeft || body && body.scrollLeft || 0) -
+            (doc && doc.clientLeft || body && body.clientLeft || 0);
+        event.pageY = event.clientY +
+            (doc && doc.scrollTop  || body && body.scrollTop  || 0) -
+            (doc && doc.clientTop  || body && body.clientTop  || 0 );
+    }
+    // Calculate the absolute left and top offsets of the tooltip. If the
+    // mouse is close to the right border of the map, show the tooltip on
+    // the left.
+    var left = event.pageX + 25;
+    if ((window.innerWidth - left) < 200) {
+        left = window.innerWidth - 200;
+    }
+    var top = event.pageY + 25;
+    console.log("Top: " + top);
+    console.log("Window: " + window.outerHeight);
+    if ((top - window.outerHeight) > 40) {
+        top = window.innerHeight + 90;
+    }
+    var delta = d.y1 - d.y0;
+
+    var tooltipText = createTooltip(countries[d.mycountry], d.name, delta);
+
+    // Show the tooltip (unhide it) and set the name of the data entry.
+    // Set the position as calculated before.
+    tooltip.classed('hidden', false)
+        .attr("style", "left:" + left + "px; top:" + top + "px")
+        .html(tooltipText);
+  }
+
+  function createTooltip(countryName, type, value) {
+      var tooltipHtml = '';
+      tooltipHtml += '<div>';
+      tooltipHtml += '<div class="tooltip-title">' + countryName + '</div>';
+      tooltipHtml += type + ': ' + value + ' species';
+      tooltipHtml += '</div>';
+      return tooltipHtml;
+  }
+
+  function hideTooltip() {
+    tooltip.classed('hidden', true);
+  }
 });
