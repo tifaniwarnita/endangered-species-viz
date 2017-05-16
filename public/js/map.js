@@ -78,5 +78,13 @@ var zoom = new Datamap({
     },
     highlightFillColor: '#2196F3',
   },
+
+  //insert on click function
+  done: function(datamap){
+    datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography){
+      // change the alert with other function for onclick
+      alert(geography.properties.name);
+    });
+  },
 });
 
