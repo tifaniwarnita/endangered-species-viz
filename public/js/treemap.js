@@ -66,10 +66,7 @@ function main(o, data) {
   grandparent.append("rect")
       .attr("y", -margin.top)
       .attr("width", width)
-      .attr("height", margin.top)
-      //.append("title")
-        //.text(function(d) { return "Total: " + "species types"; })
-      ;
+      .attr("height", margin.top);
   
   grandparent.append("text")
       .attr("x", 6)
@@ -86,7 +83,7 @@ function main(o, data) {
   }
     
   initialize(root);
-  accumulate(root);
+  var totalTypes = accumulate(root);
   layout(root);
   console.log(root);
   display(root);
@@ -160,16 +157,12 @@ function main(o, data) {
     children.append("rect")
         .attr("class", "child")
         .attr("class", "rectmap")
-        .call(rect)
-      .append("title")
-        .text(function(d) { return d.key + " (" + d3.format(",.2%")((d.value/accumulate(root))) + ")"; });
+        .call(rect);
 
     g.append("rect")
         .attr("class", "parent")
         .attr("class", "rectmap")
-        .call(rect)
-        .append("title")
-        .text(function(d) { return d.key + " (" + d3.format(",.2%")((d.value/accumulate(root))) + ")"; });
+        .call(rect);
 
     var t = g.append("text")
         .attr("class", "ptext")
@@ -186,45 +179,69 @@ function main(o, data) {
     g.append("image")
         .attr("class", "icon")
         .attr('xlink:href', function(d) { return assetBaseUrl + 'img/' + d.key + '.png'})
-        .attr("x", function(d) { return x(d.x) + 0.5*(x(d.dx) - 0.8*y(d.dy)); })
-        .attr("y", function(d) { return y(d.y) + 0.1*y(d.dy) })
-        .attr("width", function(d) { return 0.8*y(d.dy) })
-        .attr("height", function(d) { return 0.8*y(d.dy) })
+        .attr("x", function(d) { return x(d.x) + 0.5*(x(d.dx) - imageWidth(d)); })
+        .attr("y", function(d) { return y(d.y) + 0.5*(y(d.dy) - imageWidth(d)); })
+        .attr("width", function(d) { return imageWidth(d) })
+        .attr("height", function(d) { return imageWidth(d) })
         .on("mouseover",mouseoverImage)
-        .append("title")
-        .text(function(d) { return d.key + " (" + d3.format(",.2%")((d.value/accumulate(root))) + ")"; });;
+        .on("mouseout", mouseleave);
 
     g.selectAll("rect")
-        .style("fill", function(d) { return color(d.key); });
+        .transition()
+        .duration(500)
+        .style("fill", function(d) { return d.color });
 
     g.selectAll(".rectmap")
         .on("mouseover",mouseover)
-        .on("mouseleave", mouseleave);
+        .on("mouseout", mouseleave);
         
 
+    function imageWidth(d){
+        if (x(d.dx) < y(d.dy)){
+          return 0.8*x(d.dx);
+        }
+        else{
+          return 0.8*y(d.dy);
+        }
+    }
 
     function mouseover(d) {
       // Fade all the segments.
       d3.selectAll(".rectmap")
+          .transition()
+          .duration(500)
           .style("opacity", 0.2);
 
       // Then highlight only those that are an ancestor of the current segment.
       d3.select(this)
+          .transition()
+          .duration(500)
           .style("opacity", 1);
+
+      showTooltipType(d, this, totalTypes);
     }
 
     function mouseoverImage(d) {
       // Fade all the segments.
       d3.selectAll(".rectmap")
+          .transition()
+          .duration(500)
           .style("opacity", 0.2);
 
       // Then highlight only those that are an ancestor of the current segment.
       d3.select(this.parentNode).selectAll(".rectmap")
+          .transition()
+          .duration(500)
           .style("opacity", 1);
+
+      showTooltipType(d, this, totalTypes);
     }
 
-    function mouseleave(d) {
+    function mouseleave() {
+      hideTooltipType();
       d3.selectAll(".rectmap")
+          .transition()
+          .duration(800)
           .style("opacity", 1);
     }
 
@@ -298,12 +315,66 @@ function main(o, data) {
   }
 }
 
-if (window.location.hash === "") {
-    d3.json('types/data', function(err, res) {
+var baseTypeUrl = 'types/data';
+
+d3.json(baseTypeUrl, function(err, res) {
         if (!err) {
             console.log(res);
             var data = res;
             main({title: ""}, {key: "All Types", values: data});
         }
-    });
+});
+
+function showTooltipType(d, obj, total) {
+  event = document.onmousemove || window.event; // IE-ism
+
+  // If pageX/Y aren't available and clientX/Y are,
+  // calculate pageX/Y - logic taken from jQuery.
+  // (This is to support old IE)
+  if (event.pageX == null && event.clientX != null) {
+      eventDoc = (event.target && event.target.ownerDocument) || document;
+      doc = eventDoc.documentElement;
+      body = eventDoc.body;
+
+      event.pageX = event.clientX +
+          (doc && doc.scrollLeft || body && body.scrollLeft || 0) -
+          (doc && doc.clientLeft || body && body.clientLeft || 0);
+      event.pageY = event.clientY +
+          (doc && doc.scrollTop  || body && body.scrollTop  || 0) -
+          (doc && doc.clientTop  || body && body.clientTop  || 0 );
+  }
+  // Calculate the absolute left and top offsets of the tooltip. If the
+  // mouse is close to the right border of the map, show the tooltip on
+  // the left.
+  var left = event.pageX + 10;
+  if ((window.innerWidth - left) < 200) {
+      left = window.innerWidth - 200;
+  }
+  var top = event.pageY + 10;
+  if ((top - window.outerHeight) > 40) {
+      top = window.innerHeight + 140;
+  }
+  var delta = d.y1 - d.y0;
+
+  var tooltipText = createTooltipType(d, total);
+
+  // Show the tooltip (unhide it) and set the name of the data entry.
+  // Set the position as calculated before.
+  tooltip.classed('hidden', false)
+      .attr("style", "left:" + left + "px; top:" + top + "px")
+      .html(tooltipText);
+}
+
+function createTooltipType(d, total) {
+    var tooltipHtml = '';
+    tooltipHtml += '<div>';
+    tooltipHtml += '<div class="tooltip-title">' + d.key + '</div>';
+    tooltipHtml += d3.format(",.2%")((d.value/total));
+    tooltipHtml += '</div>';
+    return tooltipHtml;
+}
+
+function hideTooltipType() {
+  console.log('hide');
+  tooltip.classed('hidden', true);
 }

@@ -143,8 +143,19 @@ d3.selectAll('.datamaps-subunit').on('click', function(country) {
     threatUrl = threatUrl + '&country=' + countryCode;
   }
 
+  typeUrl = baseTypeUrl + '?country=' + countryCode;
+
   d3.json(threatUrl, function(json) {
     redrawThreat(json);
+  });
+
+  d3.json(typeUrl, function(err, res) {
+    d3.select('#treemap').selectAll("svg").remove();
+      if (!err) {
+        console.log(res);
+        var data = res;
+        main({title: ""}, {key: "All Types", values: data});
+      }
   });
 
   $("#countrytrail").text(countries[countryCode]).show();
@@ -171,6 +182,15 @@ $("#seatrail").click(function() {
 
   d3.json(threatUrl, function(json) {
     redrawThreat(json);
+  });
+
+  d3.json(baseTypeUrl, function(err, res) {
+    d3.select('#treemap').selectAll("svg").remove();
+      if (!err) {
+        console.log(res);
+        var data = res;
+        main({title: ""}, {key: "All Types", values: data});
+      }
   });
 
   d3.selectAll('.popCountry')
