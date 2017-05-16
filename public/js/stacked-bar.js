@@ -25,14 +25,14 @@ var svg = d3.select("#population-chart").append("svg")
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-    
+
 var active_link = "0"; //to control legend selections and hover
 var legendClicked; //to control legend selections
 var legendClassArray = []; //store legend classes to select bars in plotSingle()
 var y_orig; //to store original y-posn
 
-var tooltip = d3.select("body").append("div")	
-    .attr("class", "tooltip")				
+var tooltip = d3.select("body").append("div")
+    .attr("class", "tooltip")
     .style("opacity", 0);
 
 var countries;
@@ -88,7 +88,7 @@ d3.json('/population/data', function(data) {
 
   country.selectAll("rect")
       .data(function(d) {
-        return d.population; 
+        return d.population;
       })
     .enter().append("rect")
       .attr("width", x.rangeBand())
@@ -112,12 +112,12 @@ d3.json('/population/data', function(data) {
           d3.select(this).attr("stroke","blue").attr("stroke-width",0.8);
 
           showTooltip(d, this);
-          
+
        })
        .on("mouseout",function(){
           svg.select(".tooltip").remove();
           d3.select(this).attr("stroke","pink").attr("stroke-width",0.2);
-          hideTooltip();                  
+          hideTooltip();
         })
 
 
@@ -131,7 +131,7 @@ d3.json('/population/data', function(data) {
       })
       .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
 
-  //reverse order to match order in which bars are stacked    
+  //reverse order to match order in which bars are stacked
   legendClassArray = legendClassArray.reverse();
 
   legend.append("rect")
@@ -142,7 +142,7 @@ d3.json('/population/data', function(data) {
       .attr("id", function (d, i) {
         return "id" + d.replace(/\s/g, '');
       })
-      .on("mouseover",function(){        
+      .on("mouseover",function(){
 
         if (active_link === "0") d3.select(this).style("cursor", "pointer");
         else {
@@ -151,10 +151,10 @@ d3.json('/population/data', function(data) {
           } else d3.select(this).style("cursor", "auto");
         }
       })
-      .on("click",function(d){        
+      .on("click",function(d){
 
         if (active_link === "0") { //nothing selected, turn on this selection
-          d3.select(this)           
+          d3.select(this)
             .style("stroke", "black")
             .style("stroke-width", 2);
 
@@ -168,16 +168,16 @@ d3.json('/population/data', function(data) {
                   .style("opacity", 0.5);
               }
             }
-           
+
         } else { //deactivate
           if (active_link === this.id.split("id").pop()) {//active square selected; turn it OFF
-            d3.select(this)           
+            d3.select(this)
               .style("stroke", "none");
 
             active_link = "0"; //reset
 
             //restore remaining boxes to normal opacity
-            for (i = 0; i < legendClassArray.length; i++) {              
+            for (i = 0; i < legendClassArray.length; i++) {
                 d3.select("#id" + legendClassArray[i])
                   .style("opacity", 1);
             }
@@ -188,8 +188,8 @@ d3.json('/population/data', function(data) {
           }
 
         } //end active_link check
-                          
-                                
+
+
       });
 
   legend.append("text")
@@ -201,11 +201,11 @@ d3.json('/population/data', function(data) {
 
   function restorePlot(d) {
 
-    country.selectAll("rect").forEach(function (d, i) {      
+    country.selectAll("rect").forEach(function (d, i) {
       //restore shifted bars to original posn
       d3.select(d[idx])
         .transition()
-        .duration(1000)        
+        .duration(1000)
         .attr("y", y_orig[i]);
     })
 
@@ -223,24 +223,24 @@ d3.json('/population/data', function(data) {
   }
 
   function plotSingle(d) {
-        
+
     class_keep = d.id.split("id").pop();
-    idx = legendClassArray.indexOf(class_keep);    
-   
+    idx = legendClassArray.indexOf(class_keep);
+
     //erase all but selected bars by setting opacity to 0
     for (i = 0; i < legendClassArray.length; i++) {
       if (legendClassArray[i] != class_keep) {
         d3.selectAll(".class" + legendClassArray[i])
           .transition()
-          .duration(1000)          
+          .duration(1000)
           .style("opacity", 0);
       }
     }
 
     //lower the bars to start on x-axis
     y_orig = [];
-    country.selectAll("rect").forEach(function (d, i) {        
-    
+    country.selectAll("rect").forEach(function (d, i) {
+
       //get height and y posn of base bar and selected bar
       h_keep = d3.select(d[idx]).attr("height");
       y_keep = d3.select(d[idx]).attr("y");
@@ -248,7 +248,7 @@ d3.json('/population/data', function(data) {
       y_orig.push(y_keep);
 
       h_base = d3.select(d[0]).attr("height");
-      y_base = d3.select(d[0]).attr("y");    
+      y_base = d3.select(d[0]).attr("y");
 
       h_shift = h_keep - h_base;
       y_new = y_base - h_shift;
@@ -260,8 +260,8 @@ d3.json('/population/data', function(data) {
         .duration(1000)
         .delay(750)
         .attr("y", y_new);
-   
-    })    
+
+    })
   }
 
   function showTooltip(d, obj) {

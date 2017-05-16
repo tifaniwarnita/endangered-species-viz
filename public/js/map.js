@@ -54,7 +54,7 @@ $.getJSON('species/data', function(json){
 
 var zoom = new Datamap({
   element: document.getElementById("zoom_map"),
-  scope: 'world', 
+  scope: 'world',
   fills: {
     defaultFill: '#afa99a',
   },
@@ -74,24 +74,53 @@ var zoom = new Datamap({
   geographyConfig: {
    popupTemplate: function(geography, data) {
       return '<div class="hoverinfo"><b>' + geography.properties.name + '</b><br/>' +
-      'Jumlah threatened ' + data.numberOfThings + '</div>';
+      'Threated species: ' + data.numberOfThings + '</div>';
     },
     highlightFillColor: '#2196F3',
   },
-
-  //insert on click function
-  done: function(datamap){
-    datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography){
-      // change the alert with other function for onclick
-      var localdata = datamap.options.data[geography.id];
-      changeColor(geography.id, localdata.numberOfThings);
-    });
-  },
 });
 
-function changeColor(colourid, value1){
-  var dataset2 = {};
-  
-  dataset2[colourid] = {fillColor: palleteScales(value1), numberOfThings: value1};
-  zoom.updateChoropleth(dataset2, {reset: true});
-}
+d3.selectAll('.datamaps-subunit').on('click', function(country) {
+  d3.selectAll('.datamaps-subunit').style("opacity", 0.2);
+  d3.select(this).style("opacity", 1);
+  switch (country.id) {
+        case "BRN": threatUrl = baseUrl + '?country=BN'; break;
+        case "IDN": threatUrl = baseUrl + '?country=ID'; break;
+        case "KHM": threatUrl = baseUrl + '?country=KH'; break;
+        case "TLS": threatUrl = baseUrl + '?country=TL'; break;
+        case "LAO": threatUrl = baseUrl + '?country=LA'; break;
+        case "MYS": threatUrl = baseUrl + '?country=MY'; break;
+        case "MMR": threatUrl = baseUrl + '?country=MM'; break;
+        case "PHL": threatUrl = baseUrl + '?country=PH'; break;
+        case "SGD": threatUrl = baseUrl + '?country=SG'; break;
+        case "THA": threatUrl = baseUrl + '?country=TH'; break;
+        case "VNM": threatUrl = baseUrl + '?country=VN'; break;
+        default: break;
+  }
+
+  d3.json(threatUrl, function(json) {
+    d3.select('#chart').selectAll("svg").remove();
+    width = 300;
+    height = 240;
+    radius = Math.min(width, height) / 2;
+
+    vis = d3.select("#chart").append("svg:svg")
+        .attr("width", width)
+        .attr("height", height)
+        .append("svg:g")
+        .attr("id", "container")
+        .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+    partition = d3.layout.partition()
+        .size([2 * Math.PI, radius * radius])
+        // .sort(function(a, b) { return d3.ascending(a.name, b.name); })
+        .value(function(d) { return d.size; });
+
+    arc = d3.svg.arc()
+        .startAngle(function(d) { return d.x; })
+        .endAngle(function(d) { return d.x + d.dx; })
+        .innerRadius(function(d) { return Math.sqrt(d.y); })
+        .outerRadius(function(d) { return Math.sqrt(d.y + d.dy); });
+    createVisualization(json);
+  });
+});

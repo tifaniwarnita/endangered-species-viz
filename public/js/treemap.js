@@ -32,8 +32,8 @@ function main(o, data) {
                 "#c36364", //reptilia
                 "#b8f5e2", //amphibia
                 "#ffce8b", //aves
-                "#eeddd3", //mammalia
-                "#b8e1f5", //pisces
+                "#f7adae", //mammalia
+                "#b1d5e5", //pisces
                 "#cca498"  //invertebratae
               ]);
   
@@ -152,19 +152,21 @@ function main(o, data) {
     g.filter(function(d) { return d._children; })
         .classed("children", true)
         .on("click", transition);
-/*
+
     var children = g.selectAll(".child")
         .data(function(d) { return d._children || [d]; })
       .enter().append("g");
 
     children.append("rect")
         .attr("class", "child")
+        .attr("class", "rectmap")
         .call(rect)
       .append("title")
         .text(function(d) { return d.key + " (" + d3.format(",.2%")((d.value/accumulate(root))) + ")"; });
-*/
+
     g.append("rect")
         .attr("class", "parent")
+        .attr("class", "rectmap")
         .call(rect)
         .append("title")
         .text(function(d) { return d.key + " (" + d3.format(",.2%")((d.value/accumulate(root))) + ")"; });
@@ -174,6 +176,7 @@ function main(o, data) {
         .attr("dy", ".75em")
 
     t.append("tspan")
+        .attr("class", "bold")
         .text(function(d) { return d.key; });
     t.append("tspan")
         .attr("dy", "1.0em")
@@ -187,18 +190,45 @@ function main(o, data) {
         .attr("y", function(d) { return y(d.y) + 0.1*y(d.dy) })
         .attr("width", function(d) { return 0.8*y(d.dy) })
         .attr("height", function(d) { return 0.8*y(d.dy) })
+        .on("mouseover",mouseoverImage)
         .append("title")
         .text(function(d) { return d.key + " (" + d3.format(",.2%")((d.value/accumulate(root))) + ")"; });;
 
     g.selectAll("rect")
-        .style("fill", function(d) { return color(d.key); })
-        .on("mouseover", function(d){
+        .style("fill", function(d) { return color(d.key); });
 
-          d3.select(this).attr("fill","blue");
-          
-       });
+    g.selectAll(".rectmap")
+        .on("mouseover",mouseover)
+        .on("mouseleave", mouseleave);
+        
 
-    
+
+    function mouseover(d) {
+      // Fade all the segments.
+      d3.selectAll(".rectmap")
+          .style("opacity", 0.2);
+
+      // Then highlight only those that are an ancestor of the current segment.
+      d3.select(this)
+          .style("opacity", 1);
+    }
+
+    function mouseoverImage(d) {
+      // Fade all the segments.
+      d3.selectAll(".rectmap")
+          .style("opacity", 0.2);
+
+      // Then highlight only those that are an ancestor of the current segment.
+      d3.select(this.parentNode).selectAll(".rectmap")
+          .style("opacity", 1);
+    }
+
+    function mouseleave(d) {
+      d3.selectAll(".rectmap")
+          .style("opacity", 1);
+    }
+
+
 
     function transition(d) {
       if (transitioning || !d) return;
@@ -258,7 +288,7 @@ function main(o, data) {
         .attr("y", function(d) { return y(d.y); })
         .attr("width", function(d) { return x(d.x + d.dx) - x(d.x); })
         .attr("height", function(d) { return y(d.y + d.dy) - y(d.y); })
-        .attr("border-radius", function(d) {return 3;});
+        .attr("border-radius", function(d) {return 3;})
   }
 
   function name(d) {
