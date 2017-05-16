@@ -41,8 +41,10 @@ var arc = d3.svg.arc()
     .innerRadius(function(d) { return Math.sqrt(d.y); })
     .outerRadius(function(d) { return Math.sqrt(d.y + d.dy); });
 
+var baseUrl = '/threats/data';
+var threatUrl = baseUrl;
 
-d3.json('/threats/data', function(json) {
+d3.json(threatUrl, function(json) {
   createVisualization(json);
 });
 

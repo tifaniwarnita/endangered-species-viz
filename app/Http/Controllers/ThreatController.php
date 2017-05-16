@@ -24,7 +24,6 @@ class ThreatController extends Controller
                 $q->where('id', $country->id);
             })->get()->pluck('id')->toArray();
         }
-        // return $s;
 
         foreach ($threats as $threat) {
             $data = [];
