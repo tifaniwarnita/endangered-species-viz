@@ -105,7 +105,7 @@ function mouseover(d) {
 
   // Fade all the segments.
   d3.select("#chart").selectAll("path")
-      .style("opacity", 0.3);
+      .style("opacity", 0.4);
 
   // Then highlight only those that are an ancestor of the current segment.
   vis.selectAll("path")
@@ -114,7 +114,7 @@ function mouseover(d) {
               })
       .style("opacity", 1);
 
-  showTooltip(d, this);
+  showTooltipThreat(d, this);
 }
 
 // Restore everything to full opacity when moving off the visualization.
@@ -139,7 +139,7 @@ function mouseleave(d) {
   d3.select("#explanation")
       .style("visibility", "hidden");
 
-  hideTooltip();
+  hideTooltipThreat();
 }
 
 // Given a node in a partition layout, return an array of all of its ancestor
@@ -266,7 +266,7 @@ function toggleLegend() {
   }
 }
 
-function showTooltip(d, obj) {
+function showTooltipThreat(d, obj) {
   // Get the current mouse position (as integer)
   var mouse = d3.mouse(d3.select('#chart').node()).map(
       function(d) { return parseInt(d); }
@@ -302,7 +302,7 @@ function showTooltip(d, obj) {
   }
   var delta = d.y1 - d.y0;
 
-  var tooltipText = createTooltip(d);
+  var tooltipText = createTooltipThreat(d);
 
   // Show the tooltip (unhide it) and set the name of the data entry.
   // Set the position as calculated before.
@@ -311,7 +311,7 @@ function showTooltip(d, obj) {
       .html(tooltipText);
 }
 
-function createTooltip(d) {
+function createTooltipThreat(d) {
     var tooltipHtml = '';
     tooltipHtml += '<div>';
     tooltipHtml += '<div class="tooltip-title">' + labels[d.name] + '</div>';
@@ -320,6 +320,6 @@ function createTooltip(d) {
     return tooltipHtml;
 }
 
-function hideTooltip() {
+function hideTooltipThreat() {
   tooltip.classed('hidden', true);
 }
