@@ -179,29 +179,43 @@ function main(o, data) {
     g.append("image")
         .attr("class", "icon")
         .attr('xlink:href', function(d) { return assetBaseUrl + 'img/' + d.key + '.png'})
-        .attr("x", function(d) { return x(d.x) + 0.5*(x(d.dx) - 0.8*y(d.dy)); })
-        .attr("y", function(d) { return y(d.y) + 0.1*y(d.dy) })
-        .attr("width", function(d) { return 0.8*y(d.dy) })
-        .attr("height", function(d) { return 0.8*y(d.dy) })
+        .attr("x", function(d) { return x(d.x) + 0.5*(x(d.dx) - imageWidth(d)); })
+        .attr("y", function(d) { return y(d.y) + 0.5*(y(d.dy) - imageWidth(d)); })
+        .attr("width", function(d) { return imageWidth(d) })
+        .attr("height", function(d) { return imageWidth(d) })
         .on("mouseover",mouseoverImage)
         .on("mouseout", mouseleave);
 
     g.selectAll("rect")
-        .style("fill", function(d) { return d.color })
-        .on("mouseout", mouseleave);
+        .transition()
+        .duration(500)
+        .style("fill", function(d) { return d.color });
 
     g.selectAll(".rectmap")
-        .on("mouseover",mouseover);
+        .on("mouseover",mouseover)
+        .on("mouseout", mouseleave);
         
 
+    function imageWidth(d){
+        if (x(d.dx) < y(d.dy)){
+          return 0.8*x(d.dx);
+        }
+        else{
+          return 0.8*y(d.dy);
+        }
+    }
 
     function mouseover(d) {
       // Fade all the segments.
       d3.selectAll(".rectmap")
+          .transition()
+          .duration(500)
           .style("opacity", 0.2);
 
       // Then highlight only those that are an ancestor of the current segment.
       d3.select(this)
+          .transition()
+          .duration(500)
           .style("opacity", 1);
 
       showTooltipType(d, this, totalTypes);
@@ -210,10 +224,14 @@ function main(o, data) {
     function mouseoverImage(d) {
       // Fade all the segments.
       d3.selectAll(".rectmap")
+          .transition()
+          .duration(500)
           .style("opacity", 0.2);
 
       // Then highlight only those that are an ancestor of the current segment.
       d3.select(this.parentNode).selectAll(".rectmap")
+          .transition()
+          .duration(500)
           .style("opacity", 1);
 
       showTooltipType(d, this, totalTypes);
@@ -222,6 +240,8 @@ function main(o, data) {
     function mouseleave() {
       hideTooltipType();
       d3.selectAll(".rectmap")
+          .transition()
+          .duration(800)
           .style("opacity", 1);
     }
 

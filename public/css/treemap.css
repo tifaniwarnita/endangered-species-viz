@@ -44,12 +44,12 @@ rect.parent {
 }
 
 .children rect.parent {
-  fill: #bbb;
+  fill: #fff;
   fill-opacity: .5;
 }
 
 .children:hover rect.child {
-  fill: #bbb;
+  fill: #fff;
 }
 
 .gtitle {

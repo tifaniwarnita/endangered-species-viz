@@ -111,6 +111,7 @@ d3.selectAll('.datamaps-subunit').on('click', function(country) {
     .style("opacity", 1);
 
   threatUrl = baseUrl + '?country=' + countryCode;
+  typeUrl = baseTypeUrl + '?country=' + countryCode;
 
   d3.json(threatUrl, function(json) {
     d3.select('#chart').selectAll("svg").remove();
@@ -136,6 +137,15 @@ d3.selectAll('.datamaps-subunit').on('click', function(country) {
         .innerRadius(function(d) { return Math.sqrt(d.y); })
         .outerRadius(function(d) { return Math.sqrt(d.y + d.dy); });
     createVisualization(json);
+  });
+
+  d3.json(typeUrl, function(err, res) {
+    d3.select('#treemap').selectAll("svg").remove();
+      if (!err) {
+        console.log(res);
+        var data = res;
+        main({title: ""}, {key: "All Types", values: data});
+      }
   });
 
   $("#countrytrail").text(countries[countryCode]).show();
@@ -175,8 +185,19 @@ $("#seatrail").click(function() {
     createVisualization(json);
   });
 
+  d3.json(baseTypeUrl, function(err, res) {
+    d3.select('#treemap').selectAll("svg").remove();
+      if (!err) {
+        console.log(res);
+        var data = res;
+        main({title: ""}, {key: "All Types", values: data});
+      }
+  });
+
   d3.selectAll('.popCountry')
     .transition()
     .duration(500)
     .style("opacity", 1);
 });
+
+
