@@ -1,3 +1,26 @@
+.background-img{
+    background-color: #FEF5CA;
+    /*background: url('../img/background.jpg') no-repeat center center fixed;*/
+    background-size: cover;
+}
+@font-face {
+    font-family: 'bebasregular';
+    src: url('../fonts/bebas___-webfont.woff2') format('woff2'),
+         url('../fonts/bebas___-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+.title-chart{
+    font-family: 'bebasregular';
+}
+
+.page-header{
+    font-family: 'bebasregular';
+    font-style: bold;
+}
+
 @import url(https://fonts.googleapis.com/css?family=Raleway:300,400,600);/*!
  * Bootstrap v3.3.7 (http://getbootstrap.com)
  * Copyright 2011-2016 Twitter, Inc.

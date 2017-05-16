@@ -98,19 +98,19 @@
             <div class="row" style="margin-top:20px">
                <!-- threats -->
                <div class="col-md-4">
-                    <h4> Threats </h4>
+                    <h4 class="title-chart"> Threats </h4>
                     @include ('partials.threats')
                </div>
 
                <!-- class -->
                 <div class="col-md-4">
-                    <h4> Class </h4>
+                    <h4 class="title-chart"> Class </h4>
                     @include ('partials.treemap')
                 </div>
 
                <!-- population trend -->
                <div id="population-trend" class="col-md-4">
-                    <h4> Population Trend</h4>
+                    <h4 class="title-chart"> Population Trend</h4>
                     @include('partials.population')
                </div>
 
