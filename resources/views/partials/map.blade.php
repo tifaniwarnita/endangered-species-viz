@@ -1,4 +1,10 @@
-<div id="mainsequence"></div>
+<link rel="stylesheet" type="text/css" href="{{ asset('css/breadcrumb.css') }}"/>
+<div id="mainsequence">
+    <ul class="steps steps-5">
+      <li id="seatrail">South East Asia</li>
+      <li id="countrytrail" hidden>Country</li>
+    </ul>
+</div>
 <div id="zoom_map" style="position: relative; height: 400px;"></div>
 <div id="check"></div>
 <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>

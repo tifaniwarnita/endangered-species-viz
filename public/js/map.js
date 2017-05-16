@@ -3,46 +3,6 @@ var palleteScales = d3.scale.linear()
 .range(["#ffebee", "#b71c1c"]);
 var dataset={};
 
-var b = {
-  w: 100, h: 30, s: 3, t: 10
-};
-
-initializeMainBreadcrumb();
-var g = d3.select("#mainsequence").select("#trail");
-g.append("svg:polygon")
-      .attr("points", MainBreadcrumbPoints)
-      .style("fill", "#B9DCEE");
-
-g.append("svg:text")
-      .attr("x", (b.w + b.t) / 2)
-      .attr("y", b.h / 2)
-      .attr("dy", "0.35em")
-      .attr("text-anchor", "middle")
-      .text("South East Asia");
-
-function initializeMainBreadcrumb() {
-  // Add the svg area.
-  var trail = d3.select("#mainsequence").append("svg:svg")
-      .attr("width", 500)
-      .attr("height", 50)
-      .attr("id", "trail");
-}
-
-// Generate a string that describes the points of a breadcrumb polygon.
-function MainBreadcrumbPoints(d, i) {
-  var points = [];
-  points.push("0,0");
-  points.push(b.w + ",0");
-  points.push(b.w + b.t + "," + (b.h / 2));
-  points.push(b.w + "," + b.h);
-  points.push("0," + b.h);
-  if (i > 0) { // Leftmost breadcrumb; don't include 6th vertex.
-    points.push(b.t + "," + (b.h / 2));
-  }
-  return points.join(" ");
-}
-
-
 $.getJSON('species/data', function(json){
     $.each(json, function (i, item){
       var iso = item.Country, value = item.Count;
@@ -177,4 +137,43 @@ d3.selectAll('.datamaps-subunit').on('click', function(country) {
         .outerRadius(function(d) { return Math.sqrt(d.y + d.dy); });
     createVisualization(json);
   });
+
+  $("#countrytrail").text(countries[countryCode]).show();
+});
+
+$("#seatrail").click(function() {
+  $("#countrytrail").hide();
+  d3.selectAll('.datamaps-subunit').style("opacity", 0.2);
+
+  threatUrl = baseUrl;
+  d3.json(threatUrl, function(json) {
+    d3.select('#chart').selectAll("svg").remove();
+    width = 300;
+    height = 240;
+    radius = Math.min(width, height) / 2;
+
+    vis = d3.select("#chart").append("svg:svg")
+        .attr("width", width)
+        .attr("height", height)
+        .append("svg:g")
+        .attr("id", "container")
+        .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+    partition = d3.layout.partition()
+        .size([2 * Math.PI, radius * radius])
+        // .sort(function(a, b) { return d3.ascending(a.name, b.name); })
+        .value(function(d) { return d.size; });
+
+    arc = d3.svg.arc()
+        .startAngle(function(d) { return d.x; })
+        .endAngle(function(d) { return d.x + d.dx; })
+        .innerRadius(function(d) { return Math.sqrt(d.y); })
+        .outerRadius(function(d) { return Math.sqrt(d.y + d.dy); });
+    createVisualization(json);
+  });
+
+  d3.selectAll('.popCountry')
+    .transition()
+    .duration(500)
+    .style("opacity", 1);
 });
