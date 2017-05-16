@@ -26,31 +26,31 @@ function main(o, data) {
   var width = opts.width - margin.left - margin.right,
       height = opts.height - margin.top - margin.bottom - theight,
       transitioning;
-
+  
   var color = d3.scale.ordinal()
               .range([
                 "#c36364", //reptilia
                 "#b8f5e2", //amphibia
                 "#ffce8b", //aves
-                "#eeddd3", //mammalia
-                "#b8e1f5", //pisces
+                "#f7adae", //mammalia
+                "#b1d5e5", //pisces
                 "#cca498"  //invertebratae
               ]);
-
+  
   var x = d3.scale.linear()
       .domain([0, width])
       .range([0, width]);
-
+  
   var y = d3.scale.linear()
       .domain([0, height])
       .range([0, height]);
-
+  
   var treemap = d3.layout.treemap()
       .children(function(d, depth) { return depth ? null : d._children; })
       .sort(function(a, b) { return a.value - b.value; })
       .ratio(height / width * 0.5 * (1 + Math.sqrt(5)))
       .round(false);
-
+  
   var svg = d3.select("#treemap").append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.bottom + margin.top)
@@ -59,10 +59,10 @@ function main(o, data) {
     .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
       .style("shape-rendering", "crispEdges");
-
+  
   var grandparent = svg.append("g")
       .attr("class", "grandparent");
-
+  
   grandparent.append("rect")
       .attr("y", -margin.top)
       .attr("width", width)
@@ -70,7 +70,7 @@ function main(o, data) {
       //.append("title")
         //.text(function(d) { return "Total: " + "species types"; })
       ;
-
+  
   grandparent.append("text")
       .attr("x", 6)
       .attr("y", 6 - margin.top)
@@ -84,11 +84,11 @@ function main(o, data) {
   } else {
     root = data;
   }
-
+    
   initialize(root);
   accumulate(root);
   layout(root);
-  // console.log(root);
+  console.log(root);
   display(root);
 
   if (window.parent !== window) {
@@ -152,19 +152,21 @@ function main(o, data) {
     g.filter(function(d) { return d._children; })
         .classed("children", true)
         .on("click", transition);
-/*
+
     var children = g.selectAll(".child")
         .data(function(d) { return d._children || [d]; })
       .enter().append("g");
 
     children.append("rect")
         .attr("class", "child")
+        .attr("class", "rectmap")
         .call(rect)
       .append("title")
         .text(function(d) { return d.key + " (" + d3.format(",.2%")((d.value/accumulate(root))) + ")"; });
-*/
+
     g.append("rect")
         .attr("class", "parent")
+        .attr("class", "rectmap")
         .call(rect)
         .append("title")
         .text(function(d) { return d.key + " (" + d3.format(",.2%")((d.value/accumulate(root))) + ")"; });
@@ -174,6 +176,7 @@ function main(o, data) {
         .attr("dy", ".75em")
 
     t.append("tspan")
+        .attr("class", "bold")
         .text(function(d) { return d.key; });
     t.append("tspan")
         .attr("dy", "1.0em")
@@ -187,16 +190,43 @@ function main(o, data) {
         .attr("y", function(d) { return y(d.y) + 0.1*y(d.dy) })
         .attr("width", function(d) { return 0.8*y(d.dy) })
         .attr("height", function(d) { return 0.8*y(d.dy) })
+        .on("mouseover",mouseoverImage)
         .append("title")
         .text(function(d) { return d.key + " (" + d3.format(",.2%")((d.value/accumulate(root))) + ")"; });;
 
     g.selectAll("rect")
-        .style("fill", function(d) { return color(d.key); })
-        .on("mouseover", function(d){
+        .style("fill", function(d) { return color(d.key); });
 
-          d3.select(this).attr("fill","blue");
+    g.selectAll(".rectmap")
+        .on("mouseover",mouseover)
+        .on("mouseleave", mouseleave);
+        
 
-       });
+
+    function mouseover(d) {
+      // Fade all the segments.
+      d3.selectAll(".rectmap")
+          .style("opacity", 0.2);
+
+      // Then highlight only those that are an ancestor of the current segment.
+      d3.select(this)
+          .style("opacity", 1);
+    }
+
+    function mouseoverImage(d) {
+      // Fade all the segments.
+      d3.selectAll(".rectmap")
+          .style("opacity", 0.2);
+
+      // Then highlight only those that are an ancestor of the current segment.
+      d3.select(this.parentNode).selectAll(".rectmap")
+          .style("opacity", 1);
+    }
+
+    function mouseleave(d) {
+      d3.selectAll(".rectmap")
+          .style("opacity", 1);
+    }
 
 
 
@@ -258,7 +288,7 @@ function main(o, data) {
         .attr("y", function(d) { return y(d.y); })
         .attr("width", function(d) { return x(d.x + d.dx) - x(d.x); })
         .attr("height", function(d) { return y(d.y + d.dy) - y(d.y); })
-        .attr("border-radius", function(d) {return 3;});
+        .attr("border-radius", function(d) {return 3;})
   }
 
   function name(d) {
@@ -271,7 +301,7 @@ function main(o, data) {
 if (window.location.hash === "") {
     d3.json('types/data', function(err, res) {
         if (!err) {
-            // console.log(res);
+            console.log(res);
             var data = res;
             main({title: ""}, {key: "All Types", values: data});
         }
