@@ -97,7 +97,7 @@ d3.selectAll('.datamaps-subunit').on('click', function(country) {
         case "VNM": threatUrl = baseUrl + '?country=VN'; break;
         default: break;
   }
-  console.log(threatUrl);
+
   d3.json(threatUrl, function(json) {
     d3.select('#chart').selectAll("svg").remove();
     width = 300;
