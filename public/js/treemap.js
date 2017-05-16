@@ -26,7 +26,7 @@ function main(o, data) {
   var width = opts.width - margin.left - margin.right,
       height = opts.height - margin.top - margin.bottom - theight,
       transitioning;
-  
+
   var color = d3.scale.ordinal()
               .range([
                 "#c36364", //reptilia
@@ -36,21 +36,21 @@ function main(o, data) {
                 "#b1d5e5", //pisces
                 "#cca498"  //invertebratae
               ]);
-  
+
   var x = d3.scale.linear()
       .domain([0, width])
       .range([0, width]);
-  
+
   var y = d3.scale.linear()
       .domain([0, height])
       .range([0, height]);
-  
+
   var treemap = d3.layout.treemap()
       .children(function(d, depth) { return depth ? null : d._children; })
       .sort(function(a, b) { return a.value - b.value; })
       .ratio(height / width * 0.5 * (1 + Math.sqrt(5)))
       .round(false);
-  
+
   var svg = d3.select("#treemap").append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.bottom + margin.top)
@@ -59,15 +59,15 @@ function main(o, data) {
     .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
       .style("shape-rendering", "crispEdges");
-  
+
   var grandparent = svg.append("g")
       .attr("class", "grandparent");
-  
+
   grandparent.append("rect")
       .attr("y", -margin.top)
       .attr("width", width)
       .attr("height", margin.top);
-  
+
   grandparent.append("text")
       .attr("x", 6)
       .attr("y", 6 - margin.top)
@@ -81,7 +81,7 @@ function main(o, data) {
   } else {
     root = data;
   }
-    
+
   initialize(root);
   var totalTypes = accumulate(root);
   layout(root);
@@ -187,14 +187,14 @@ function main(o, data) {
         .on("mouseout", mouseleave);
 
     g.selectAll("rect")
-        .transition()
-        .duration(500)
+        // .transition()
+        // .duration(500)
         .style("fill", function(d) { return d.color });
 
     g.selectAll(".rectmap")
         .on("mouseover",mouseover)
         .on("mouseout", mouseleave);
-        
+
 
     function imageWidth(d){
         if (x(d.dx) < y(d.dy)){
@@ -316,6 +316,7 @@ function main(o, data) {
 }
 
 var baseTypeUrl = 'types/data';
+var typeUrl = baseTypeUrl;
 
 d3.json(baseTypeUrl, function(err, res) {
         if (!err) {

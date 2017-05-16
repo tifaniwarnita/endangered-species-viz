@@ -143,7 +143,11 @@ d3.selectAll('.datamaps-subunit').on('click', function(country) {
     threatUrl = threatUrl + '&country=' + countryCode;
   }
 
-  typeUrl = baseTypeUrl + '?country=' + countryCode;
+  if (typeUrl == baseTypeUrl) {
+    typeUrl = baseTypeUrl + '?country=' + countryCode;
+  } else {
+    typeUrl = typeUrl + '&country=' + countryCode;
+  }
 
   d3.json(threatUrl, function(json) {
     redrawThreat(json);
@@ -152,7 +156,6 @@ d3.selectAll('.datamaps-subunit').on('click', function(country) {
   d3.json(typeUrl, function(err, res) {
     d3.select('#treemap').selectAll("svg").remove();
       if (!err) {
-        console.log(res);
         var data = res;
         main({title: ""}, {key: "All Types", values: data});
       }
@@ -170,7 +173,6 @@ $("#seatrail").click(function() {
 
   if (threatUrl.includes("category")) {
     code = threatUrl.split('&country=')[1];
-    console.log(code);
     if (threatUrl.includes("?country")) {
       threatUrl = threatUrl.replace('country=' + code + '?', '');
     } else {
@@ -180,14 +182,24 @@ $("#seatrail").click(function() {
     threatUrl = baseUrl;
   }
 
+  if (typeUrl.includes("category")) {
+    code = typeUrl.split('&country=')[1];
+    if (typeUrl.includes("?country")) {
+      typeUrl = typeUrl.replace('country=' + code + '?', '');
+    } else {
+      typeUrl = typeUrl.replace('&country=' + code, '');
+    }
+  } else {
+    typeUrl = baseTypeUrl;
+  }
+
   d3.json(threatUrl, function(json) {
     redrawThreat(json);
   });
 
-  d3.json(baseTypeUrl, function(err, res) {
+  d3.json(typeUrl, function(err, res) {
     d3.select('#treemap').selectAll("svg").remove();
       if (!err) {
-        console.log(res);
         var data = res;
         main({title: ""}, {key: "All Types", values: data});
       }
@@ -212,6 +224,12 @@ $('#legendCR').on("click", function (d) {
       threatUrl = threatUrl + "&category=CR";
     }
 
+    if (typeUrl == baseTypeUrl) {
+      typeUrl = baseTypeUrl + "?category=CR";
+    } else {
+      typeUrl = typeUrl + "&category=CR";
+    }
+
     d3.select('#legendEN').style('opacity', 0.2);
     d3.select('#legendVU').style('opacity', 0.2);
   } else { //deactivate
@@ -229,13 +247,32 @@ $('#legendCR').on("click", function (d) {
       } else {
         threatUrl = baseUrl;
       }
+
+      if (typeUrl.includes("country")) {
+        if (typeUrl.includes("?category")) {
+          typeUrl = typeUrl.replace("category=CR?", '');
+        } else {
+          typeUrl = typeUrl.replace("&category=CR", '');
+        }
+      } else {
+        typeUrl = baseTypeUrl;
+      }
+
       d3.select('#legendEN').style('opacity', 1);
       d3.select('#legendVU').style('opacity', 1);
     }
   }
   d3.json(threatUrl, function(json) {
       redrawThreat(json);
-    });
+  });
+
+  d3.json(typeUrl, function(err, res) {
+    d3.select('#treemap').selectAll("svg").remove();
+      if (!err) {
+        var data = res;
+        main({title: ""}, {key: "All Types", values: data});
+      }
+  });
 });
 
 $('#legendEN').on("click", function (d) {
@@ -250,6 +287,13 @@ $('#legendEN').on("click", function (d) {
     } else {
       threatUrl = threatUrl + "&category=EN";
     }
+
+    if (typeUrl == baseTypeUrl) {
+      typeUrl = baseTypeUrl + "?category=EN";
+    } else {
+      typeUrl = typeUrl + "&category=EN";
+    }
+
     d3.select('#legendCR').style('opacity', 0.2);
     d3.select('#legendVU').style('opacity', 0.2);
   } else { //deactivate
@@ -267,13 +311,32 @@ $('#legendEN').on("click", function (d) {
       } else {
         threatUrl = baseUrl;
       }
+
+      if (typeUrl.includes("country")) {
+        if (typeUrl.includes("?category")) {
+          typeUrl = typeUrl.replace("category=EN?", '');
+        } else {
+          typeUrl = typeUrl.replace("&category=EN", '');
+        }
+      } else {
+        typeUrl = baseTypeUrl;
+      }
+
       d3.select('#legendCR').style('opacity', 1);
       d3.select('#legendVU').style('opacity', 1);
     }
   }
   d3.json(threatUrl, function(json) {
       redrawThreat(json);
-    });
+  });
+
+  d3.json(typeUrl, function(err, res) {
+    d3.select('#treemap').selectAll("svg").remove();
+      if (!err) {
+        var data = res;
+        main({title: ""}, {key: "All Types", values: data});
+      }
+  });
 });
 
 $('#legendVU').on("click", function (d) {
@@ -288,6 +351,13 @@ $('#legendVU').on("click", function (d) {
     } else {
       threatUrl = threatUrl + "&category=VU";
     }
+
+    if (typeUrl == baseTypeUrl) {
+      typeUrl = baseTypeUrl + "?category=VU";
+    } else {
+      typeUrl = typeUrl + "&category=VU";
+    }
+
     d3.select('#legendEN').style('opacity', 0.2);
     d3.select('#legendCR').style('opacity', 0.2);
   } else { //deactivate
@@ -305,11 +375,30 @@ $('#legendVU').on("click", function (d) {
       } else {
         threatUrl = baseUrl;
       }
+
+      if (typeUrl.includes("country")) {
+        if (typeUrl.includes("?category")) {
+          typeUrl = typeUrl.replace("category=VU?", '');
+        } else {
+          typeUrl = typeUrl.replace("&category=VU", '');
+        }
+      } else {
+        typeUrl = baseTypeUrl;
+      }
+
       d3.select('#legendEN').style('opacity', 1);
       d3.select('#legendCR').style('opacity', 1);
     }
   }
   d3.json(threatUrl, function(json) {
       redrawThreat(json);
-    });
+  });
+
+  d3.json(typeUrl, function(err, res) {
+    d3.select('#treemap').selectAll("svg").remove();
+      if (!err) {
+        var data = res;
+        main({title: ""}, {key: "All Types", values: data});
+      }
+  });
 });
