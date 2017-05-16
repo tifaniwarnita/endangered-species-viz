@@ -83,8 +83,15 @@ var zoom = new Datamap({
   done: function(datamap){
     datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography){
       // change the alert with other function for onclick
-      alert(geography.properties.name);
+      var localdata = datamap.options.data[geography.id];
+      changeColor(geography.id, localdata.numberOfThings);
     });
   },
 });
 
+function changeColor(colourid, value1){
+  var dataset2 = {};
+  
+  dataset2[colourid] = {fillColor: palleteScales(value1), numberOfThings: value1};
+  zoom.updateChoropleth(dataset2, {reset: true});
+}
