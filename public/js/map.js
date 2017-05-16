@@ -99,7 +99,17 @@ d3.selectAll('.datamaps-subunit').on('click', function(country) {
         case "VNM": countryCode = 'VN'; break;
         default: break;
   }
-  
+
+  d3.selectAll('.popCountry')
+    .transition()
+    .duration(500)
+    .style("opacity", 0.2);
+
+  d3.selectAll('.country' + countryCode)
+    .transition()
+    .duration(500)
+    .style("opacity", 1);
+
   threatUrl = baseUrl + '?country=' + countryCode;
 
   d3.json(threatUrl, function(json) {

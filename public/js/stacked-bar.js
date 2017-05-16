@@ -99,7 +99,7 @@ d3.json('/population/data', function(data) {
       .attr("height", function(d) { return y(d.y0) - y(d.y1); })
       .attr("class", function(d) {
         classLabel = d.name.replace(/\s/g, ''); //remove spaces
-        return "class" + classLabel + " " + "country" + d.mycountry;
+        return "class" + classLabel + " " + "country" + d.mycountry + " popCountry";
       })
       .style("fill", function(d) { return color(d.name); });
 
