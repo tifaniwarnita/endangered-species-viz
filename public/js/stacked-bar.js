@@ -9,7 +9,7 @@ var y = d3.scale.linear()
     .rangeRound([height, 0]);
 
 var color = d3.scale.ordinal()
-    .range(["#ED9798", "#B7E2B2", "#B9DCEE", "#D3D1A8"]);
+    .range(["#f15d5d", "#5bbfb5", "#b1d5e5", "#e3d1c7"]);
 
 var xAxis = d3.svg.axis()
     .scale(x)
@@ -60,17 +60,24 @@ d3.json('/population/data', function(data) {
   svg.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + height + ")")
-      .call(xAxis);
+      .call(xAxis)
+    .append("text")
+      .attr("y", -38)
+      .attr("dy", ".71em")
+      .style("text-anchor", "middle")
+      .attr("transform", "translate(" + (width/2) + ", 60)")
+      .text("Country");
+
 
   svg.append("g")
       .attr("class", "y axis")
       .call(yAxis)
     .append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
+      .attr("y", -38)
       .attr("dy", ".71em")
-      .style("text-anchor", "end");
-      //.text("Population");
+      .style("text-anchor", "middle")
+      .attr("transform", "translate(-2, " + (height/2)+ ") rotate(-90)")
+      .text("Population");
 
   var country = svg.selectAll(".country")
       .data(data)
@@ -262,9 +269,6 @@ d3.json('/population/data', function(data) {
     var mouse = d3.mouse(d3.select('#population-chart').node()).map(
         function(d) { return parseInt(d); }
     );
-
-    var xOffset = document.getElementById("population-trend").offsetLeft;
-    var yOffset = document.getElementById("population-trend").offsetTop;
 
     event = document.onmousemove || window.event; // IE-ism
 
