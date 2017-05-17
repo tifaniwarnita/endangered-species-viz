@@ -4,6 +4,8 @@ var palleteScales = d3.scale.linear()
 
 var dataset = {};
 
+var main_legend_active = "0";
+
 $.getJSON('species/data', function(json){
     $.each(json, function (i, item){
       var iso = item.Country, value = item.Count;
@@ -64,9 +66,9 @@ var zoom = new Datamap({
   // Zoom in on SEA
   setProjection: function(element) {
     var projection = d3.geo.equirectangular()
-      .center([125, 7])
+      .center([120, 6.5])
       .rotate([4.4, 0])
-      .scale(650)
+      .scale(680)
       .translate([element.offsetWidth / 2, element.offsetHeight / 2]);
     var path = d3.geo.path()
       .projection(projection);
@@ -75,38 +77,14 @@ var zoom = new Datamap({
   geographyConfig: {
    popupTemplate: function(geography, data) {
       return '<div class="hoverinfo"><b>' + geography.properties.name + '</b><br/>' +
-      'Threated species: ' + data.numberOfThings + '</div>';
+      'Threatened species: ' + data.numberOfThings + '</div>';
     },
     highlightFillColor: '#2196F3',
   },
 });
 
-d3.selectAll('.datamaps-subunit').on('click', function(country) {
-  console.log(country);
-  d3.selectAll('.datamaps-subunit').style("opacity", 0.2);
-  d3.select(this).style("opacity", 1);
-
-  switch (country.id) {
-        case "BRN": countryCode = 'BN'; break;
-        case "IDN": countryCode = 'ID'; break;
-        case "KHM": countryCode = 'KH'; break;
-        case "TLS": countryCode = 'TL'; break;
-        case "LAO": countryCode = 'LA'; break;
-        case "MYS": countryCode = 'MY'; break;
-        case "MMR": countryCode = 'MM'; break;
-        case "PHL": countryCode = 'PH'; break;
-        case "SGD": countryCode = 'SG'; break;
-        case "THA": countryCode = 'TH'; break;
-        case "VNM": countryCode = 'VN'; break;
-        default: break;
-  }
-
-  updateStackBar();
-
-  threatUrl = baseUrl + '?country=' + countryCode;
-
-  d3.json(threatUrl, function(json) {
-    d3.select('#chart').selectAll("svg").remove();
+function redrawThreat(json) {
+  d3.select('#chart').selectAll("svg").remove();
     width = 300;
     height = 240;
     radius = Math.min(width, height) / 2;
@@ -129,5 +107,291 @@ d3.selectAll('.datamaps-subunit').on('click', function(country) {
         .innerRadius(function(d) { return Math.sqrt(d.y); })
         .outerRadius(function(d) { return Math.sqrt(d.y + d.dy); });
     createVisualization(json);
+}
+
+d3.selectAll('.datamaps-subunit').on('click', function(country) {
+  d3.selectAll('.datamaps-subunit').style("opacity", 0.2);
+  d3.select(this).style("opacity", 1);
+
+  switch (country.id) {
+        case "BRN": countryCode = 'BN'; break;
+        case "IDN": countryCode = 'ID'; break;
+        case "KHM": countryCode = 'KH'; break;
+        case "TLS": countryCode = 'TL'; break;
+        case "LAO": countryCode = 'LA'; break;
+        case "MYS": countryCode = 'MY'; break;
+        case "MMR": countryCode = 'MM'; break;
+        case "PHL": countryCode = 'PH'; break;
+        case "SGP": countryCode = 'SG'; break;
+        case "THA": countryCode = 'TH'; break;
+        case "VNM": countryCode = 'VN'; break;
+        default: break;
+  }
+
+  updateStackBar();
+
+  if (threatUrl == baseUrl) {
+    threatUrl = baseUrl + '?country=' + countryCode;
+  } else {
+    threatUrl = threatUrl + '&country=' + countryCode;
+  }
+
+  if (typeUrl == baseTypeUrl) {
+    typeUrl = baseTypeUrl + '?country=' + countryCode;
+  } else {
+    typeUrl = typeUrl + '&country=' + countryCode;
+  }
+
+  d3.json(threatUrl, function(json) {
+    redrawThreat(json);
+  });
+
+  d3.json(typeUrl, function(err, res) {
+    d3.select('#treemap').selectAll("svg").remove();
+      if (!err) {
+        var data = res;
+        main({title: ""}, {key: "All Types", values: data});
+      }
+  });
+
+  $("#countrytrail").text(countries[countryCode]).show();
+});
+
+$("#seatrail").click(function() {
+  $("#countrytrail").hide();
+  d3.selectAll('.datamaps-subunit')
+    .transition()
+    .duration(500)
+    .style("opacity", 1);
+
+  if (threatUrl.includes("category")) {
+    code = threatUrl.split('&country=')[1];
+    if (threatUrl.includes("?country")) {
+      threatUrl = threatUrl.replace('country=' + code + '?', '');
+    } else {
+      threatUrl = threatUrl.replace('&country=' + code, '');
+    }
+  } else {
+    threatUrl = baseUrl;
+  }
+
+  if (typeUrl.includes("category")) {
+    code = typeUrl.split('&country=')[1];
+    if (typeUrl.includes("?country")) {
+      typeUrl = typeUrl.replace('country=' + code + '?', '');
+    } else {
+      typeUrl = typeUrl.replace('&country=' + code, '');
+    }
+  } else {
+    typeUrl = baseTypeUrl;
+  }
+
+  d3.json(threatUrl, function(json) {
+    redrawThreat(json);
+  });
+
+  d3.json(typeUrl, function(err, res) {
+    d3.select('#treemap').selectAll("svg").remove();
+      if (!err) {
+        var data = res;
+        main({title: ""}, {key: "All Types", values: data});
+      }
+  });
+
+  d3.selectAll('.popCountry')
+    .transition()
+    .duration(500)
+    .style("opacity", 1);
+});
+
+$('#legendCR').on("click", function (d) {
+  if (main_legend_active === "0") { //nothing selected, turn on this selection
+    d3.select(this).select('rect')
+      .style("stroke", "black")
+      .style("stroke-width", 2);
+    main_legend_active = "legendCR";
+
+    if (threatUrl == baseUrl) {
+      threatUrl = baseUrl + "?category=CR";
+    } else {
+      threatUrl = threatUrl + "&category=CR";
+    }
+
+    if (typeUrl == baseTypeUrl) {
+      typeUrl = baseTypeUrl + "?category=CR";
+    } else {
+      typeUrl = typeUrl + "&category=CR";
+    }
+
+    d3.select('#legendEN').style('opacity', 0.2);
+    d3.select('#legendVU').style('opacity', 0.2);
+  } else { //deactivate
+    if (main_legend_active === "legendCR") {
+      d3.select(this).select('rect')
+        .style("stroke", "none");
+      main_legend_active = "0";
+
+      if (threatUrl.includes("country")) {
+        if (threatUrl.includes("?category")) {
+          threatUrl = threatUrl.replace("category=CR?", '');
+        } else {
+          threatUrl = threatUrl.replace("&category=CR", '');
+        }
+      } else {
+        threatUrl = baseUrl;
+      }
+
+      if (typeUrl.includes("country")) {
+        if (typeUrl.includes("?category")) {
+          typeUrl = typeUrl.replace("category=CR?", '');
+        } else {
+          typeUrl = typeUrl.replace("&category=CR", '');
+        }
+      } else {
+        typeUrl = baseTypeUrl;
+      }
+
+      d3.select('#legendEN').style('opacity', 1);
+      d3.select('#legendVU').style('opacity', 1);
+    }
+  }
+  d3.json(threatUrl, function(json) {
+      redrawThreat(json);
+  });
+
+  d3.json(typeUrl, function(err, res) {
+    d3.select('#treemap').selectAll("svg").remove();
+      if (!err) {
+        var data = res;
+        main({title: ""}, {key: "All Types", values: data});
+      }
+  });
+});
+
+$('#legendEN').on("click", function (d) {
+  if (main_legend_active === "0") { //nothing selected, turn on this selection
+    d3.select(this).select('rect')
+      .style("stroke", "black")
+      .style("stroke-width", 2);
+    main_legend_active = "legendEN";
+
+    if (threatUrl == baseUrl) {
+      threatUrl = baseUrl + "?category=EN";
+    } else {
+      threatUrl = threatUrl + "&category=EN";
+    }
+
+    if (typeUrl == baseTypeUrl) {
+      typeUrl = baseTypeUrl + "?category=EN";
+    } else {
+      typeUrl = typeUrl + "&category=EN";
+    }
+
+    d3.select('#legendCR').style('opacity', 0.2);
+    d3.select('#legendVU').style('opacity', 0.2);
+  } else { //deactivate
+    if (main_legend_active === "legendEN") {
+      d3.select(this).select('rect')
+        .style("stroke", "none");
+      main_legend_active = "0";
+
+      if (threatUrl.includes("country")) {
+        if (threatUrl.includes("?category")) {
+          threatUrl = threatUrl.replace("category=EN?", '');
+        } else {
+          threatUrl = threatUrl.replace("&category=EN", '');
+        }
+      } else {
+        threatUrl = baseUrl;
+      }
+
+      if (typeUrl.includes("country")) {
+        if (typeUrl.includes("?category")) {
+          typeUrl = typeUrl.replace("category=EN?", '');
+        } else {
+          typeUrl = typeUrl.replace("&category=EN", '');
+        }
+      } else {
+        typeUrl = baseTypeUrl;
+      }
+
+      d3.select('#legendCR').style('opacity', 1);
+      d3.select('#legendVU').style('opacity', 1);
+    }
+  }
+  d3.json(threatUrl, function(json) {
+      redrawThreat(json);
+  });
+
+  d3.json(typeUrl, function(err, res) {
+    d3.select('#treemap').selectAll("svg").remove();
+      if (!err) {
+        var data = res;
+        main({title: ""}, {key: "All Types", values: data});
+      }
+  });
+});
+
+$('#legendVU').on("click", function (d) {
+  if (main_legend_active === "0") { //nothing selected, turn on this selection
+    d3.select(this).select('rect')
+      .style("stroke", "black")
+      .style("stroke-width", 2);
+    main_legend_active = "legendVU";
+
+    if (threatUrl == baseUrl) {
+      threatUrl = baseUrl + "?category=VU";
+    } else {
+      threatUrl = threatUrl + "&category=VU";
+    }
+
+    if (typeUrl == baseTypeUrl) {
+      typeUrl = baseTypeUrl + "?category=VU";
+    } else {
+      typeUrl = typeUrl + "&category=VU";
+    }
+
+    d3.select('#legendEN').style('opacity', 0.2);
+    d3.select('#legendCR').style('opacity', 0.2);
+  } else { //deactivate
+    if (main_legend_active === "legendVU") {
+      d3.select(this).select('rect')
+        .style("stroke", "none");
+      main_legend_active = "0";
+
+      if (threatUrl.includes("country")) {
+        if (threatUrl.includes("?category")) {
+          threatUrl = threatUrl.replace("category=VU?", '');
+        } else {
+          threatUrl = threatUrl.replace("&category=VU", '');
+        }
+      } else {
+        threatUrl = baseUrl;
+      }
+
+      if (typeUrl.includes("country")) {
+        if (typeUrl.includes("?category")) {
+          typeUrl = typeUrl.replace("category=VU?", '');
+        } else {
+          typeUrl = typeUrl.replace("&category=VU", '');
+        }
+      } else {
+        typeUrl = baseTypeUrl;
+      }
+
+      d3.select('#legendEN').style('opacity', 1);
+      d3.select('#legendCR').style('opacity', 1);
+    }
+  }
+  d3.json(threatUrl, function(json) {
+      redrawThreat(json);
+  });
+
+  d3.json(typeUrl, function(err, res) {
+    d3.select('#treemap').selectAll("svg").remove();
+      if (!err) {
+        var data = res;
+        main({title: ""}, {key: "All Types", values: data});
+      }
   });
 });
