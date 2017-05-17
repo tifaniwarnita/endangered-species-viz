@@ -30,16 +30,16 @@ rect.parent {
 }
 
 .grandparent rect {
-  fill: #bc7aad;
+  fill: #9b9b9b;
 }
 
 .grandparent:hover rect {
- 
+
 }
 
 .children rect.parent,
 .grandparent rect {
-  
+
 }
 
 .children rect.parent {

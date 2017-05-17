@@ -9,7 +9,7 @@ var y = d3.scale.linear()
     .rangeRound([height, 0]);
 
 var color = d3.scale.ordinal()
-    .range(["#f15d5d", "#5bbfb5", "#b1d5e5", "#e3d1c7"]);
+    .range(["#d2696a", "#5bbfb5", "#b1d5e5", "#e3d1c7"]);
 
 var xAxis = d3.svg.axis()
     .scale(x)
@@ -154,7 +154,7 @@ d3.json('/population/data', function(data) {
         }
       })
       .on("click",function(d) {
-        if (calculateActiveLegend() == 4 && isFirst) { // all selected but first            
+        if (calculateActiveLegend() == 4 && isFirst) { // all selected but first
             for (var key in activeLegend) {
               activeLegend[key] = 0;
             }
@@ -312,7 +312,7 @@ d3.json('/population/data', function(data) {
             idx++;
         }
     }
-    
+
   }
 
   function getVpPos(el) {
@@ -366,7 +366,7 @@ d3.json('/population/data', function(data) {
             .transition()
             .duration(500)
             .delay(250)
-            .style("opacity", 1);  
+            .style("opacity", 1);
         }
       }
     }

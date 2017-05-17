@@ -132,19 +132,19 @@
             <div class="row" style="margin-top:20px">
                <!-- class -->
                 <div class="col-lg-4">
-                    <h4> Class </h4>
+                    <h4 class="chart-title"> Class </h4>
                     @include ('partials.treemap')
                 </div>
 
                 <!-- threats -->
                <div class="col-lg-4">
-                    <h4> Threats </h4>
+                    <h4 class="chart-title"> Threats </h4>
                     @include ('partials.threats')
                </div>
 
                <!-- population trend -->
                <div id="population-trend" class="col-lg-4">
-                    <h4> Population Trend</h4>
+                    <h4 class="chart-title"> Population Trend</h4>
                     @include('partials.population')
                </div>
 
@@ -167,6 +167,10 @@
 
 .carousel-control.left, .carousel-control.right {
     background-image: none
+}
+
+.chart-title {
+  font-family: 'Roboto Slab', serif;
 }
 </style>
 

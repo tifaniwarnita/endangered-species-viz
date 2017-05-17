@@ -43,7 +43,7 @@
   top: 0;
   right: -18px; /* arrow width (negated) */
   display: block;
-  border-left: 18px solid #B9DCEE; /* width: arrow width */
+  border-left: 18px solid #81C0AB; /* width: arrow width */
   border-top: 15px solid transparent; /* width: half height */
   border-bottom: 15px solid transparent; /* width: half height */
   width:0;
@@ -54,9 +54,9 @@
 /* Setup colors (both the background and the arrow) */
 
 /* Completed */
-.steps li { background-color: #B9DCEE; }
-.steps li::after { border-left-color: #B9DCEE; }
+.steps li { background-color: #81C0AB; }
+.steps li::after { border-left-color: #81C0AB; }
 
 /* Hover for completed and current */
-.steps li:hover {background-color: #81C0AB}
-.steps li:hover::after {border-left-color: #81C0AB}
+.steps li:hover {background-color: #ffce8b}
+.steps li:hover::after {border-left-color: #ffce8b}
