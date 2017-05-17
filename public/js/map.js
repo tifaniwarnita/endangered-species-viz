@@ -176,7 +176,7 @@ $("#seatrail").click(function() {
 
   if (threatUrl.includes("category")) {
     code = threatUrl.split('country=')[1].substring(0,2);
-    console.log(code);
+
     if (threatUrl.includes('?country')) {
       threatUrl = threatUrl.replace('country=' + code + '&', '');
     } else {
@@ -234,6 +234,8 @@ $('#legendCR').on("click", function (d) {
       typeUrl = typeUrl + "&category=CR";
     }
 
+    populationUrl = basePopulationUrl + "?category=CR";
+
     d3.select('#legendEN').style('opacity', 0.2);
     d3.select('#legendVU').style('opacity', 0.2);
   } else { //deactivate
@@ -262,6 +264,8 @@ $('#legendCR').on("click", function (d) {
         typeUrl = baseTypeUrl;
       }
 
+      populationUrl = basePopulationUrl;
+
       d3.select('#legendEN').style('opacity', 1);
       d3.select('#legendVU').style('opacity', 1);
     }
@@ -277,6 +281,21 @@ $('#legendCR').on("click", function (d) {
         main({title: ""}, {key: "All Types", values: data});
       }
   });
+
+  d3.select('#population-chart').selectAll("svg").remove();
+
+  svg = d3.select("#population-chart").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  tooltip = d3.select("body").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
+  drawStackedBar(populationUrl);
+  updateStackBar();
 });
 
 $('#legendEN').on("click", function (d) {
@@ -297,6 +316,8 @@ $('#legendEN').on("click", function (d) {
     } else {
       typeUrl = typeUrl + "&category=EN";
     }
+
+    populationUrl = basePopulationUrl + "?category=EN";
 
     d3.select('#legendCR').style('opacity', 0.2);
     d3.select('#legendVU').style('opacity', 0.2);
@@ -326,6 +347,8 @@ $('#legendEN').on("click", function (d) {
         typeUrl = baseTypeUrl;
       }
 
+      populationUrl = basePopulationUrl;
+
       d3.select('#legendCR').style('opacity', 1);
       d3.select('#legendVU').style('opacity', 1);
     }
@@ -341,6 +364,21 @@ $('#legendEN').on("click", function (d) {
         main({title: ""}, {key: "All Types", values: data});
       }
   });
+
+  d3.select('#population-chart').selectAll("svg").remove();
+
+  svg = d3.select("#population-chart").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  tooltip = d3.select("body").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
+  drawStackedBar(populationUrl);
+  updateStackBar();
 });
 
 $('#legendVU').on("click", function (d) {
@@ -361,6 +399,8 @@ $('#legendVU').on("click", function (d) {
     } else {
       typeUrl = typeUrl + "&category=VU";
     }
+
+    populationUrl = basePopulationUrl + "?category=VU";
 
     d3.select('#legendEN').style('opacity', 0.2);
     d3.select('#legendCR').style('opacity', 0.2);
@@ -390,6 +430,8 @@ $('#legendVU').on("click", function (d) {
         typeUrl = baseTypeUrl;
       }
 
+      populationUrl = basePopulationUrl;
+
       d3.select('#legendEN').style('opacity', 1);
       d3.select('#legendCR').style('opacity', 1);
     }
@@ -405,4 +447,19 @@ $('#legendVU').on("click", function (d) {
         main({title: ""}, {key: "All Types", values: data});
       }
   });
+
+  d3.select('#population-chart').selectAll("svg").remove();
+
+  svg = d3.select("#population-chart").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  tooltip = d3.select("body").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
+  drawStackedBar(populationUrl);
+  updateStackBar();
 });

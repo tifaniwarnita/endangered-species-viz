@@ -43,7 +43,9 @@ $.getJSON('population/countries', function(json){
 var updateStackBar;
 var basePopulationUrl = '/population/data';
 var populationUrl = basePopulationUrl;
+drawStackedBar(populationUrl);
 
+function drawStackedBar(populationUrl) {
 d3.json(populationUrl, function(data) {
   var orderedKey = ["Decreasing", "Stable", "Increasing", "Unknown"];
   color.domain(orderedKey);
@@ -283,7 +285,6 @@ d3.json(populationUrl, function(data) {
                     var y_new = base_height - bar_height[i];
 
                     var currentCountry = d[idx]["__data__"]["mycountry"];
-
                     // adjusting country
                     if (countryCode == "NULL") {
                         d3.select(d[idx])
@@ -470,3 +471,4 @@ d3.json(populationUrl, function(data) {
     tooltip.classed('hidden', true);
   }
 });
+}

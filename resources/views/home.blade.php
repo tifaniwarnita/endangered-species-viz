@@ -69,7 +69,7 @@
                 </div>
 
                 <div class="col-md-4">
-                    <div class="visible hidden-xs hidden-sm">
+                    <div class="visible hidden-xs hidden-sm" style="margin-top: 30px;">
                         <!-- carousel -->
                         <div id="myCarousel" class="carousel slide" data-ride="carousel">
                         <!-- Indicators -->
