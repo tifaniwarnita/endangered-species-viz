@@ -133,7 +133,7 @@
             <div class="row">
                <!-- class -->
                 <div class="col-lg-4">
-                    <h4 class="chart-title"> Animal Types </h4>
+                    <h4 class="chart-title"> Which Types are Threatened? </h4>
                     @include ('partials.treemap')
                 </div>
 
@@ -145,13 +145,44 @@
 
                <!-- population trend -->
                <div id="population-trend" class="col-lg-4">
-                    <h4 class="chart-title"> Population Trend</h4>
+                    <h4 class="chart-title"> Most are Decreasing!</h4>
                     @include('partials.population')
                </div>
 
             </div>
+
+            <div class="row">
+                <div class="col-md-12 text-center">
+                            <h3 class="chart-title"> Act now! </h3>
+                            <a data-scroll href="#footer" class="btn btn-circle page-scroll">
+                                <i class="fa fa-angle-double-down animated"></i>
+                            </a>
+                </div>
+            </div>
+
         </div>
-    </body>
+        <div style="height: 300px"></div>
+        <div id="footer" class="intro">
+            <div class="intro-body">
+                <div class="container full-width">
+                    <div class="row">
+                        <div class="col-md-2"></div>
+                        <div class="col-md-8">  
+                            <h2 class="brand-heading">
+                            It's not whether animals will survive, it's whether man has the will to save them.
+                            </h2>
+                            <h5> Anthony Douglas Williams </h5>
+                            <div style="margin-top: 80px">
+                            <button type="button" class="btn">Join the Fight!</button>
+                            <button type="button" class="btn">Explore More</button>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
 </html>
 
 <style>
