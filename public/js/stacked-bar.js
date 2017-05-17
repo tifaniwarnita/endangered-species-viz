@@ -1,6 +1,6 @@
-var margin = {top: 0, right: 20, bottom: 30, left: 40},
-    width = 400 - margin.left - margin.right,
-    height = 210 - margin.top - margin.bottom;
+var margin = {top: 0, right: 20, bottom: 30, left: 40};
+var width = 400 - margin.left - margin.right;
+var height = 210 - margin.top - margin.bottom;
 
 var x = d3.scale.ordinal()
     .rangeRoundBands([0, width], .1);
@@ -62,6 +62,9 @@ d3.json(populationUrl, function(data) {
 
   x.domain(data.map(function(d) { return d.Country; }));
   y.domain([0, d3.max(data, function(d) { return d.total; })]);
+
+  // HARDCODE height buat redraw
+  height = 180;
 
   svg.append("g")
       .attr("class", "x axis")

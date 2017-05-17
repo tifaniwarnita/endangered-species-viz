@@ -109,6 +109,23 @@ function redrawThreat(json) {
     createVisualization(json);
 }
 
+function redrawPopulationTrend(populationUrl) {
+  d3.select('#population-chart').selectAll("svg").remove();
+
+  svg = d3.select("#population-chart").append("svg")
+    .attr("width", 400)
+    .attr("height", 210)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  tooltip = d3.select("body").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
+  drawStackedBar(populationUrl);
+  updateStackBar();
+}
+
 d3.selectAll('.datamaps-subunit').on('click', function(country) {
   d3.selectAll('.datamaps-subunit').style("opacity", 0.2);
   d3.select(this).style("opacity", 1);
@@ -282,20 +299,7 @@ $('#legendCR').on("click", function (d) {
       }
   });
 
-  d3.select('#population-chart').selectAll("svg").remove();
-
-  svg = d3.select("#population-chart").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-  tooltip = d3.select("body").append("div")
-    .attr("class", "tooltip")
-    .style("opacity", 0);
-
-  drawStackedBar(populationUrl);
-  updateStackBar();
+  redrawPopulationTrend(populationUrl);
 });
 
 $('#legendEN').on("click", function (d) {
@@ -365,20 +369,7 @@ $('#legendEN').on("click", function (d) {
       }
   });
 
-  d3.select('#population-chart').selectAll("svg").remove();
-
-  svg = d3.select("#population-chart").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-  tooltip = d3.select("body").append("div")
-    .attr("class", "tooltip")
-    .style("opacity", 0);
-
-  drawStackedBar(populationUrl);
-  updateStackBar();
+  redrawPopulationTrend(populationUrl);
 });
 
 $('#legendVU').on("click", function (d) {
@@ -448,18 +439,5 @@ $('#legendVU').on("click", function (d) {
       }
   });
 
-  d3.select('#population-chart').selectAll("svg").remove();
-
-  svg = d3.select("#population-chart").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-  tooltip = d3.select("body").append("div")
-    .attr("class", "tooltip")
-    .style("opacity", 0);
-
-  drawStackedBar(populationUrl);
-  updateStackBar();
+  redrawPopulationTrend(populationUrl);
 });
