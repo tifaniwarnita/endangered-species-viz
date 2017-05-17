@@ -1,7 +1,8 @@
 var palleteScales = d3.scale.linear()
 .domain([27, 894])
 .range(["#ffebee", "#b71c1c"]);
-var dataset={};
+
+var dataset = {};
 
 $.getJSON('species/data', function(json){
     $.each(json, function (i, item){
@@ -84,7 +85,7 @@ d3.selectAll('.datamaps-subunit').on('click', function(country) {
   console.log(country);
   d3.selectAll('.datamaps-subunit').style("opacity", 0.2);
   d3.select(this).style("opacity", 1);
-  var countryCode;
+
   switch (country.id) {
         case "BRN": countryCode = 'BN'; break;
         case "IDN": countryCode = 'ID'; break;
@@ -100,15 +101,7 @@ d3.selectAll('.datamaps-subunit').on('click', function(country) {
         default: break;
   }
 
-  d3.selectAll('.popCountry')
-    .transition()
-    .duration(500)
-    .style("opacity", 0.2);
-
-  d3.selectAll('.country' + countryCode)
-    .transition()
-    .duration(500)
-    .style("opacity", 1);
+  updateStackBar();
 
   threatUrl = baseUrl + '?country=' + countryCode;
 

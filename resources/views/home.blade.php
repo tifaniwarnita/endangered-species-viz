@@ -94,6 +94,8 @@
                     </div>
                 </div>
             </div>
+            
+            <script type="text/javascript" src="{{ asset('js/endangered-animals.js') }}"></script>
 
             <div class="row" style="margin-top:20px">
                <!-- threats -->

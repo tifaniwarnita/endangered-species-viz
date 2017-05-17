@@ -40,6 +40,8 @@ $.getJSON('population/countries', function(json){
     countries = json;
 });
 
+var updateStackBar;
+
 d3.json('/population/data', function(data) {
   var orderedKey = ["Decreasing", "Stable", "Increasing", "Unknown"];
   color.domain(orderedKey);
@@ -151,46 +153,174 @@ d3.json('/population/data', function(data) {
           } else d3.select(this).style("cursor", "auto");
         }
       })
-      .on("click",function(d){
-
-        if (active_link === "0") { //nothing selected, turn on this selection
-          d3.select(this)
-            .style("stroke", "black")
-            .style("stroke-width", 2);
-
-            active_link = this.id.split("id").pop();
-            plotSingle(this);
-
-            //gray out the others
-            for (i = 0; i < legendClassArray.length; i++) {
-              if (legendClassArray[i] != active_link) {
-                d3.select("#id" + legendClassArray[i])
-                  .style("opacity", 0.5);
-              }
+      .on("click",function(d) {
+        if (calculateActiveLegend() == 4 && isFirst) { // all selected but first            
+            for (var key in activeLegend) {
+              activeLegend[key] = 0;
             }
-
-        } else { //deactivate
-          if (active_link === this.id.split("id").pop()) {//active square selected; turn it OFF
-            d3.select(this)
-              .style("stroke", "none");
-
-            active_link = "0"; //reset
-
-            //restore remaining boxes to normal opacity
-            for (i = 0; i < legendClassArray.length; i++) {
-                d3.select("#id" + legendClassArray[i])
-                  .style("opacity", 1);
+            activeLegend[d] = 1;
+            isFirst = false;
+        } else if (calculateActiveLegend() == 4 && !isFirst) {
+            activeLegend[d] = 0;
+        } else if (calculateActiveLegend() == 1 && activeLegend[d] == 1) { // return to normal state
+            for (var key in activeLegend) {
+              activeLegend[key] = 1;
             }
+        } else {
+            if (activeLegend[d] == 1) { // already active
+              activeLegend[d] = 0;
+            } else {
+              activeLegend[d] = 1;
+            }
+        }
 
-            //restore plot to original
-            restorePlot(d);
-
-          }
-
-        } //end active_link check
-
+        updateLegend();
+        updateStackBar();
 
       });
+
+  function updateLegend() {
+    for (var key in activeLegend) {
+      if (activeLegend[key] == 0) { // not active
+        d3.select("#id" + key)
+            .style("opacity", 0.2)
+      } else { // active
+        d3.select("#id" + key)
+          .style("opacity", 1)
+      }
+    }
+  }
+
+  var y_superbase = [];
+  var base_height = 0;
+
+  country.selectAll("rect").forEach(function (d, i) {
+    base_height = Number(d3.select(d[0]).attr("y")) + Number(d3.select(d[0]).attr("height"));
+    y_superbase.push(base_height);
+  })
+
+  country.selectAll("rect").forEach(function (d, i) {
+    //get height and y posn of base bar and selected bar
+    var h_keep = d3.select(d[0]).attr("height");
+    var y_keep = d3.select(d[0]).attr("y");
+
+    var h_base = d3.select(d[0]).attr("height");
+    var y_base = d3.select(d[0]).attr("y");
+
+    var h_shift = h_keep - h_base;
+    var y_new = y_base - h_shift;
+
+  });
+
+  updateStackBar = function update() {
+    if (calculateActiveLegend() == 1) {
+        var idx = 0;
+        for (var key in activeLegend) {
+            if (activeLegend[key] == 0) { // not active
+                d3.selectAll(".class" + key)
+                    .transition()
+                    .duration(500)
+                    .style("opacity", 0);
+            } else { // active
+                country.selectAll("rect").forEach(function (d, i) {
+                    //get height and y posn of base bar and selected bar
+                    var h_keep = d3.select(d[idx]).attr("height");
+                    var y_new = base_height - h_keep;
+
+                    //adjusting country
+                    var currentCountry = d[idx]["__data__"]["mycountry"];
+                    if (countryCode == "NULL") {
+                        d3.select(d[idx])
+                            .transition()
+                            .ease("bounce")
+                            .duration(1000)
+                            .delay(750)
+                            .attr("y", y_new)
+                            .style("opacity", 1);
+                    } else {
+                        if (currentCountry == countryCode) {
+                            d3.select(d[idx])
+                                .transition()
+                                .ease("bounce")
+                                .duration(1000)
+                                .delay(750)
+                                .attr("y", y_new)
+                                .style("opacity", 1);
+                        } else {
+                            d3.select(d[idx])
+                                .transition()
+                                .ease("bounce")
+                                .duration(1000)
+                                .delay(750)
+                                .attr("y", y_new)
+                                .style("opacity", 0.2);
+                        }
+                    }
+                });
+            }
+            idx++;
+        }
+    } else {
+        var idx = 0;
+        var bar_height = y_superbase.slice();
+        for(var i = 0; i < y_superbase.length; i++) {
+            bar_height[i] = 0;
+        }
+        var is_active = true;
+        for (var key in activeLegend) {
+            if (activeLegend[key] == 0) { // not active
+                d3.selectAll(".class" + key)
+                    .transition()
+                    .duration(500)
+                    .style("opacity", 0);
+            } else { // active
+                country.selectAll("rect").forEach(function (d, i) {
+                    //restore shifted bars to original posn
+                    var h_keep = d3.select(d[idx]).attr("height");
+                    bar_height[i] += Number(h_keep);
+                    var y_new = base_height - bar_height[i];
+
+                    var currentCountry = d[idx]["__data__"]["mycountry"];
+
+                    // adjusting country
+                    if (countryCode == "NULL") {
+                        d3.select(d[idx])
+                            .transition()
+                            .duration(750)
+                            .delay(500)
+                            .attr("y", y_new)
+                            .style("opacity", 1);
+                    } else {
+                        if (currentCountry == countryCode) {
+                            d3.select(d[idx])
+                                .transition()
+                                .duration(750)
+                                .delay(500)
+                                .attr("y", y_new)
+                                .style("opacity", 1);
+                        } else {
+                            d3.select(d[idx])
+                                .transition()
+                                .duration(750)
+                                .delay(500)
+                                .attr("y", y_new)
+                                .style("opacity", 0.2);
+                        }
+                    }
+                });
+            }
+            idx++;
+        }
+    }
+    
+  }
+
+  function getVpPos(el) {
+    if(el.parentNode.nodeName === 'svg') {
+        return el.parentNode.getBoundingClientRect();
+    }
+    return getVpPos(el.parentNode);
+}
 
   legend.append("text")
       .attr("x", width - 24)
@@ -199,24 +329,45 @@ d3.json('/population/data', function(data) {
       .style("text-anchor", "end")
       .text(function(d) { return d; });
 
+  function calculateActiveLegend() {
+      var result = 0;
+      for (var key in activeLegend) {
+        result += activeLegend[key];
+      }
+      return result;
+  }
+
   function restorePlot(d) {
 
     country.selectAll("rect").forEach(function (d, i) {
       //restore shifted bars to original posn
       d3.select(d[idx])
         .transition()
-        .duration(1000)
+        .duration(500)
         .attr("y", y_orig[i]);
     })
 
     //restore opacity of erased bars
     for (i = 0; i < legendClassArray.length; i++) {
       if (legendClassArray[i] != class_keep) {
-        d3.selectAll(".class" + legendClassArray[i])
-          .transition()
-          .duration(1000)
-          .delay(750)
-          .style("opacity", 1);
+        if (countryCode == "NULL") {
+          d3.selectAll(".class" + legendClassArray[i])
+            .transition()
+            .duration(500)
+            .delay(250)
+            .style("opacity", 1);
+        } else {
+          d3.selectAll(".class" + legendClassArray[i])
+            .transition()
+            .duration(500)
+            .delay(250)
+            .style("opacity", 0.2);
+          d3.selectAll('.country' + countryCode)
+            .transition()
+            .duration(500)
+            .delay(250)
+            .style("opacity", 1);  
+        }
       }
     }
 
@@ -232,7 +383,7 @@ d3.json('/population/data', function(data) {
       if (legendClassArray[i] != class_keep) {
         d3.selectAll(".class" + legendClassArray[i])
           .transition()
-          .duration(1000)
+          .duration(500)
           .style("opacity", 0);
       }
     }
@@ -257,19 +408,14 @@ d3.json('/population/data', function(data) {
       d3.select(d[idx])
         .transition()
         .ease("bounce")
-        .duration(1000)
-        .delay(750)
+        .duration(500)
+        .delay(250)
         .attr("y", y_new);
 
     })
   }
 
   function showTooltip(d, obj) {
-    // Get the current mouse position (as integer)
-    var mouse = d3.mouse(d3.select('#population-chart').node()).map(
-        function(d) { return parseInt(d); }
-    );
-
     event = document.onmousemove || window.event; // IE-ism
 
     // If pageX/Y aren't available and clientX/Y are,
@@ -295,8 +441,6 @@ d3.json('/population/data', function(data) {
         left = window.innerWidth - 200;
     }
     var top = event.pageY + 25;
-    console.log("Top: " + top);
-    console.log("Window: " + window.outerHeight);
     if ((top - window.outerHeight) > 40) {
         top = window.innerHeight + 90;
     }
