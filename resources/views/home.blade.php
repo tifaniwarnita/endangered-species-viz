@@ -11,7 +11,7 @@
         <link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Slab" rel="stylesheet">
 
         <!-- Stylesheet -->
-        <link href="{{ asset('css/font-awesome.min.css') }}" rel="stylesheet">
+        <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
         <link rel="stylesheet" href="{{ asset('lib/bootstrap/dist/css/bootstrap.min.css') }}">
         <link href="{{ asset('css/app.css') }}" rel="stylesheet">
         <link href="{{ asset('css/grayscale.css') }}" rel="stylesheet">
@@ -126,25 +126,25 @@
                     </div>
                   </div>
             </div>
-            
+
             <script type="text/javascript" src="{{ asset('js/endangered-animals.js') }}"></script>
 
-            <div class="row" style="margin-top:20px">
+            <div class="row">
                <!-- class -->
                 <div class="col-lg-4">
-                    <h4> Class </h4>
+                    <h4 class="chart-title"> Types </h4>
                     @include ('partials.treemap')
                 </div>
 
                 <!-- threats -->
                <div class="col-lg-4">
-                    <h4> Threats </h4>
+                    <h4 class="chart-title"> Threats </h4>
                     @include ('partials.threats')
                </div>
 
                <!-- population trend -->
                <div id="population-trend" class="col-lg-4">
-                    <h4> Population Trend</h4>
+                    <h4 class="chart-title"> Population Trend</h4>
                     @include('partials.population')
                </div>
 
@@ -167,6 +167,10 @@
 
 .carousel-control.left, .carousel-control.right {
     background-image: none
+}
+
+.chart-title {
+  font-family: 'Roboto Slab', serif;
 }
 </style>
 
