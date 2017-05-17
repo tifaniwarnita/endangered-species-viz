@@ -79,14 +79,14 @@ var zoom = new Datamap({
       return '<div class="hoverinfo"><b>' + geography.properties.name + '</b><br/>' +
       'Threatened species: ' + data.numberOfThings + '</div>';
     },
-    highlightFillColor: '#2196F3',
+    highlightFillColor: '#ffef66',
   },
 });
 
 function redrawThreat(json) {
   d3.select('#chart').selectAll("svg").remove();
     width = 300;
-    height = 240;
+    height = 200;
     radius = Math.min(width, height) / 2;
 
     vis = d3.select("#chart").append("svg:svg")
