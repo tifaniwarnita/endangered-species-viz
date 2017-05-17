@@ -220,6 +220,7 @@ d3.json(populationUrl, function(data) {
   });
 
   updateStackBar = function update() {
+    console.log(countryCode);
     if (calculateActiveLegend() == 1) {
         var idx = 0;
         for (var key in activeLegend) {

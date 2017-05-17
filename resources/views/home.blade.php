@@ -153,7 +153,7 @@
 
             <div class="row">
                 <div class="col-md-12 text-center">
-                            <h3 class="chart-title"> Act now! </h3>
+                            <h3 class="chart-title" style="margin-top:0px"> Act now! </h3>
                             <a data-scroll href="#footer" class="btn btn-circle page-scroll">
                                 <i class="fa fa-angle-double-down animated"></i>
                             </a>
@@ -169,12 +169,12 @@
                         <div class="col-md-2"></div>
                         <div class="col-md-8">  
                             <h2 class="brand-heading">
-                            It's not whether animals will survive, it's whether man has the will to save them.
+                            "It's not whether animals will survive, it's whether man has the will to save them."
                             </h2>
                             <h5> Anthony Douglas Williams </h5>
                             <div style="margin-top: 80px">
-                            <button type="button" class="btn">Join the Fight!</button>
-                            <button type="button" class="btn">Explore More</button>
+                            <a class="btn btn-style" href="https://www.actforwildlife.org.uk/get-involved/" target="_blank">Join the Fight!</a>
+                            <a class="btn btn-style" href="http://www.iucnredlist.org/" target="_blank">Explore More</a>
                             </div>
                         </div>
 
