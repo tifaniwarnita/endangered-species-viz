@@ -66,9 +66,9 @@ var zoom = new Datamap({
   // Zoom in on SEA
   setProjection: function(element) {
     var projection = d3.geo.equirectangular()
-      .center([120, 6.5])
+      .center([120, 5])
       .rotate([4.4, 0])
-      .scale(680)
+      .scale(750)
       .translate([element.offsetWidth / 2, element.offsetHeight / 2]);
     var path = d3.geo.path()
       .projection(projection);
