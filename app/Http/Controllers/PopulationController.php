@@ -11,8 +11,8 @@ class PopulationController extends Controller
     public function data(Request $request)
     {
         $countries = Country::with('species')->get();
-
         $category = Species::selectRaw('count(*) AS cnt, population_trend')->groupBy('population_trend')->get();
+        $species_cat = $request->get('category');
         
         $result = [];
         $obj = new \stdClass();
@@ -28,7 +28,13 @@ class PopulationController extends Controller
 
             // Count species 
             foreach($country->species as $species) {
-                $data[ucfirst($species->population_trend)] += 1;
+                if ($species_cat != null) {
+                    if ($species->category == $species_cat) {
+                        $data[ucfirst($species->population_trend)] += 1;
+                    }
+                } else {
+                    $data[ucfirst($species->population_trend)] += 1;
+                }
             }
             
             $result[] = $data;

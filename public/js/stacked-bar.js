@@ -41,8 +41,10 @@ $.getJSON('population/countries', function(json){
 });
 
 var updateStackBar;
+var basePopulationUrl = '/population/data';
+var populationUrl = basePopulationUrl;
 
-d3.json('/population/data', function(data) {
+d3.json(populationUrl, function(data) {
   var orderedKey = ["Decreasing", "Stable", "Increasing", "Unknown"];
   color.domain(orderedKey);
 
@@ -442,7 +444,7 @@ d3.json('/population/data', function(data) {
     }
     var top = event.pageY + 25;
     if ((top - window.outerHeight) > 40) {
-        top = window.innerHeight + 90;
+        top -= 50;
     }
     var delta = d.y1 - d.y0;
 
