@@ -85,7 +85,7 @@ function main(o, data) {
   initialize(root);
   var totalTypes = accumulate(root);
   layout(root);
-  console.log(root);
+  // console.log(root);
   display(root);
 
   if (window.parent !== window) {
@@ -320,7 +320,7 @@ var typeUrl = baseTypeUrl;
 
 d3.json(baseTypeUrl, function(err, res) {
         if (!err) {
-            console.log(res);
+            // console.log(res);
             var data = res;
             main({title: ""}, {key: "All Types", values: data});
         }
@@ -376,6 +376,6 @@ function createTooltipType(d, total) {
 }
 
 function hideTooltipType() {
-  console.log('hide');
+  // console.log('hide');
   tooltip.classed('hidden', true);
 }

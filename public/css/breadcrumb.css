@@ -10,7 +10,7 @@
   height: 30px; /* total height */
   list-style-type: none;
   padding: 8px 5px 5px 30px; /* padding around text, last should include arrow width */
-  border-right: 3px solid white; /* width: gap between arrows, color: background of document */
+  border-right: 3px solid #f3f1dc; /* width: gap between arrows, color: background of document */
   position: relative;
   color:#000000;
   font-size:1.2em;
@@ -29,7 +29,7 @@
   top:0;
   left:0;
   display: block;
-  border-left: 18px solid white; /* width: arrow width, color: background of document */
+  border-left: 18px solid #f3f1dc; /* width: arrow width, color: background of document */
   border-top: 15px solid transparent; /* width: half height */
   border-bottom: 15px solid transparent; /* width: half height */
   width: 0;

@@ -130,16 +130,26 @@ d3.selectAll('.datamaps-subunit').on('click', function(country) {
 
   updateStackBar();
 
-  if (threatUrl == baseUrl) {
-    threatUrl = baseUrl + '?country=' + countryCode;
+  if (threatUrl.includes("country")) {
+    code = threatUrl.split('country=')[1].substring(0,2);
+    threatUrl = threatUrl.replace(code, countryCode);
   } else {
-    threatUrl = threatUrl + '&country=' + countryCode;
+    if (threatUrl == baseUrl) {
+      threatUrl = baseUrl + '?country=' + countryCode;
+    } else {
+      threatUrl = threatUrl + '&country=' + countryCode;
+    }
   }
 
-  if (typeUrl == baseTypeUrl) {
-    typeUrl = baseTypeUrl + '?country=' + countryCode;
+  if (typeUrl.includes("country")) {
+    code = typeUrl.split('country=')[1].substring(0,2);
+    typeUrl = typeUrl.replace(code, countryCode);
   } else {
-    typeUrl = typeUrl + '&country=' + countryCode;
+    if (typeUrl == baseTypeUrl) {
+      typeUrl = baseTypeUrl + '?country=' + countryCode;
+    } else {
+      typeUrl = typeUrl + '&country=' + countryCode;
+    }
   }
 
   d3.json(threatUrl, function(json) {
@@ -165,9 +175,10 @@ $("#seatrail").click(function() {
     .style("opacity", 1);
 
   if (threatUrl.includes("category")) {
-    code = threatUrl.split('&country=')[1];
-    if (threatUrl.includes("?country")) {
-      threatUrl = threatUrl.replace('country=' + code + '?', '');
+    code = threatUrl.split('country=')[1].substring(0,2);
+    console.log(code);
+    if (threatUrl.includes('?country')) {
+      threatUrl = threatUrl.replace('country=' + code + '&', '');
     } else {
       threatUrl = threatUrl.replace('&country=' + code, '');
     }
@@ -176,9 +187,9 @@ $("#seatrail").click(function() {
   }
 
   if (typeUrl.includes("category")) {
-    code = typeUrl.split('&country=')[1];
-    if (typeUrl.includes("?country")) {
-      typeUrl = typeUrl.replace('country=' + code + '?', '');
+    code = typeUrl.split('country=')[1].substring(0,2);
+    if (typeUrl.includes('?country')) {
+      typeUrl = typeUrl.replace('country=' + code + '&', '');
     } else {
       typeUrl = typeUrl.replace('&country=' + code, '');
     }

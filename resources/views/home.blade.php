@@ -11,7 +11,7 @@
         <link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Slab" rel="stylesheet">
 
         <!-- Stylesheet -->
-        <link href="{{ asset('css/font-awesome.min.css') }}" rel="stylesheet">
+        <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
         <link rel="stylesheet" href="{{ asset('lib/bootstrap/dist/css/bootstrap.min.css') }}">
         <link href="{{ asset('css/app.css') }}" rel="stylesheet">
         <link href="{{ asset('css/grayscale.css') }}" rel="stylesheet">
@@ -126,7 +126,7 @@
                     </div>
                   </div>
             </div>
-            
+
             <script type="text/javascript" src="{{ asset('js/endangered-animals.js') }}"></script>
 
             <div class="row" style="margin-top:20px">
