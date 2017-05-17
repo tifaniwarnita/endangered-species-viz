@@ -176,6 +176,9 @@
                             <a class="btn btn-style" href="https://www.actforwildlife.org.uk/get-involved/" target="_blank">Join the Fight!</a>
                             <a class="btn btn-style" href="http://www.iucnredlist.org/" target="_blank">Explore More</a>
                             </div>
+                            <div style="margin-top: 200px">
+                                <p><b>Source: IUCN Red List </b></p>
+                            </div>
                         </div>
 
                         <div class="col-md-2"></div>
