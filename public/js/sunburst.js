@@ -296,8 +296,8 @@ function showTooltipThreat(d, obj) {
       left = window.innerWidth - 200;
   }
   var top = event.pageY + 25;
-  if ((top - window.outerHeight) > 40) {
-      top = window.innerHeight + 90;
+  if ((window.outerHeight - top) < 40) {
+    top -= 50;
   }
   var delta = d.y1 - d.y0;
 

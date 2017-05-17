@@ -173,7 +173,7 @@ function main(o, data) {
         .text(function(d) { return d.key; });
     t.append("tspan")
         .attr("dy", "1.0em")
-        .text(function(d) { return "("+ formatNumber(d.value) +")"; });
+        .text(function(d) { return d3.format(",.2%")(d.value/totalTypes) });
     t.call(text);
 
     g.append("image")
@@ -352,8 +352,8 @@ function showTooltipType(d, obj, total) {
       left = window.innerWidth - 200;
   }
   var top = event.pageY + 10;
-  if ((top - window.outerHeight) > 40) {
-      top = window.innerHeight + 140;
+  if ((window.outerHeight - top) < 40) {
+    top -= 50;
   }
   var delta = d.y1 - d.y0;
 
@@ -370,7 +370,7 @@ function createTooltipType(d, total) {
     var tooltipHtml = '';
     tooltipHtml += '<div>';
     tooltipHtml += '<div class="tooltip-title">' + d.key + '</div>';
-    tooltipHtml += d3.format(",.2%")((d.value/total));
+    tooltipHtml += d3.format(",.2%")((d.value/total)) + ' (' + d.value + ')';
     tooltipHtml += '</div>';
     return tooltipHtml;
 }
