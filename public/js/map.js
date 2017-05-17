@@ -76,7 +76,7 @@ var zoom = new Datamap({
   geographyConfig: {
    popupTemplate: function(geography, data) {
       return '<div class="hoverinfo"><b>' + geography.properties.name + '</b><br/>' +
-      'Threated species: ' + data.numberOfThings + '</div>';
+      'Threatened species: ' + data.numberOfThings + '</div>';
     },
     highlightFillColor: '#2196F3',
   },
