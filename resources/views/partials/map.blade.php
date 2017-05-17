@@ -9,8 +9,8 @@
         </div>
         <div id="mainlegend" class="col-md-6" style="padding-top: 5px">
             <div class="row">
-                <div class="col-md-4" style="padding-top: 5px; font-size:12.5px; text-align: right;">
-                    <b>CONSERVATION STATUS:</b>
+                <div class="col-md-4" style="padding-top: 0px; font-size:12.5px; text-align: right;">
+                    <b>FILTER BY CONSERVATION STATUS:</b>
                 </div>
                 <div class="col-md-8">
                 <svg width="300" height="25">

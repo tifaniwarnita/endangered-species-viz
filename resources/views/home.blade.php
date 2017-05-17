@@ -49,7 +49,8 @@
                         <div class="col-md-4 text-center">
                             <h1 class="brand-heading">Threatened Animals of Southeast Asia</h1>
                             <p class="intro-text">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                                As the largest, most populated and fastest growing continent on Earth, animal species in Southeast Asia face extinction due to conflicts with humans.
+                                It's important for us to realize that human populations and activities will continue to grow and threaten the earth’s habitat and capacity to sustain life, putting animal species on the ever-increasing threatened animals list.
                             </p>
                             <a data-scroll href="#dashboard" class="btn btn-circle page-scroll">
                                 <i class="fa fa-angle-double-down animated"></i>
@@ -132,13 +133,13 @@
             <div class="row">
                <!-- class -->
                 <div class="col-lg-4">
-                    <h4 class="chart-title"> Types </h4>
+                    <h4 class="chart-title"> Animal Types </h4>
                     @include ('partials.treemap')
                 </div>
 
                 <!-- threats -->
                <div class="col-lg-4">
-                    <h4 class="chart-title"> Threats </h4>
+                    <h4 class="chart-title"> What are the Causes? </h4>
                     @include ('partials.threats')
                </div>
 
