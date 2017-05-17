@@ -11,7 +11,7 @@ var defaults = {
     format: ",d",
     title: "",
     width: 350,
-    height: 300
+    height: 250
 };
 
 function main(o, data) {
@@ -178,11 +178,12 @@ function main(o, data) {
 
     g.append("image")
         .attr("class", "icon")
-        .attr('xlink:href', function(d) { return assetBaseUrl + 'img/' + d.key + '.png'})
+        .attr('xlink:href', function(d) { return assetBaseUrl + 'img/type/' + d.key + '.png'})
         .attr("x", function(d) { return x(d.x) + 0.5*(x(d.dx) - imageWidth(d)); })
         .attr("y", function(d) { return y(d.y) + 0.5*(y(d.dy) - imageWidth(d)); })
         .attr("width", function(d) { return imageWidth(d) })
         .attr("height", function(d) { return imageWidth(d) })
+        .style("opacity",0.3)
         .on("mouseover",mouseoverImage)
         .on("mouseout", mouseleave);
 

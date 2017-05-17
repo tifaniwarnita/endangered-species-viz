@@ -129,10 +129,10 @@
 
             <script type="text/javascript" src="{{ asset('js/endangered-animals.js') }}"></script>
 
-            <div class="row" style="margin-top:20px">
+            <div class="row">
                <!-- class -->
                 <div class="col-lg-4">
-                    <h4 class="chart-title"> Class </h4>
+                    <h4 class="chart-title"> Types </h4>
                     @include ('partials.treemap')
                 </div>
 
