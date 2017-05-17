@@ -153,7 +153,7 @@
 
             <div class="row">
                 <div class="col-md-12 text-center">
-                            <h3 class="chart-title" style="margin-top:0px"> Act now! </h3>
+                            <a data-scroll href="#footer"><h3 class="chart-title" style="margin-top:0px; color: rgb(183, 28, 28)"> Act now! </h3></a>
                             <a data-scroll href="#footer" class="btn btn-circle page-scroll">
                                 <i class="fa fa-angle-double-down animated"></i>
                             </a>
