@@ -251,3 +251,9 @@ body {
   color: rgb(183, 28, 28);
   background:white;
 }
+
+
+.link:hover,
+.link:focus {
+  text-decoration: underline rgb(183, 28, 28);
+}
